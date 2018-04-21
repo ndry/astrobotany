@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "outFile": "./public/app.js",
+        "module": "system",
+        "moduleResolution": "node",
+        "target": "es2017",
+        
+        "watch": true,
+        "sourceMap": true,
+
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitUseStrict": true,
+        "strictNullChecks": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false
+    },
+    "include": [
+        "./node_modules/babylonjs/dist/preview release/babylon.d.ts",
+        "./node_modules/babylonjs-gui/babylon.gui.d.ts",
+        "./src/**/*"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "extends": "tslint:latest",
+    "rules": {
+        "typedef": false,
+        "ordered-imports": false,
+        "member-access": false,
+        "arrow-parens": false,
+        "member-ordering": false,
+        "max-classes-per-file": false,
+        "interface-name": false,
+        "space-before-function-paren": [true, {
+            "anonymous": "always",
+            "named": "never",
+            "asyncArrow": "always"
+        }]
+    }
+}

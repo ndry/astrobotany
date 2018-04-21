@@ -1,0 +1,13 @@
+{
+  "name": "astrobotany",
+  "private": true,
+  "scripts": {
+    "cbuild": "tsc",
+    "start": "http-server . -p 45845 -o http://127.0.0.1:45845/public/ -c-1"
+  },
+  "devDependencies": {
+    "http-server": "^0.10.0"
+  },
+  "dependencies": {
+  }
+}

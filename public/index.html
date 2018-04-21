@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8" />
+<title>astrobotany</title>
+<link rel="icon" href="./favicon.ico">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.20.19/system.js"></script>
+<script src="./system.config.js"></script>
+<script src="./app.js"></script>
+<script>
+    window.addEventListener('load', function(e) {
+        System
+            .import('main')
+            .then(null, console.error.bind(console));
+    });
+</script>
+<style>
+    html, body {
+        background-color: black;
+        overflow: hidden;
+        width   : 100%;
+        height  : 100%;
+        margin  : 0;
+        padding : 0;
+    }
+    #container {
+        width: 1210px;
+        height: 610px;
+        position: relative;
+    }
+    #canvas {
+        position: absolute;
+        width: 1210px;
+        height: 610px;
+    }
+    #canvas-left, #canvas-right {
+        width: 300px;
+        height: 300px;
+    }
+    #canvas-coneCells {
+        width: 256px;
+        height: 256px;
+    }
+
+    #startScreen {
+        /* position: absolute; */
+        z-index: 5;
+        color: white;
+        background-color: black;
+        left: 0;
+        right: 0;
+    }
+
+    #startScreen .chemical-info {
+        position: relative;
+        margin: 5px;
+        display: inline-block;
+    }
+
+    #startScreen .chemical-spectre {
+        width: 140px;
+        height: 65px;
+        border: 1px white solid;
+        background-color: #808080;
+    }
+
+    #startScreen .chemical-value {
+        position: absolute;
+        right: 0;
+        top: 0;
+        border: 1px white solid;
+        z-index: 10;
+        color: white;
+    }
+
+</style>
+
+</head>
+<body>
+    <div id="startScreen">
+            <h2>Planet chemicals:</h2>
+            <div>
+                <div id="chemical-info-1" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                    <div class="chemical-value">
+                        +10
+                    </div>
+                </div>
+                <div id="chemical-info-2" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                    <div class="chemical-value">
+                        +10
+                    </div>
+                </div>
+                <div id="chemical-info-3" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                    <div class="chemical-value">
+                        +10
+                    </div>
+                </div>
+                <div id="chemical-info-4" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                    <div class="chemical-value">
+                        +10
+                    </div>
+                </div>
+                <div id="chemical-info-5" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                    <div class="chemical-value">
+                        +10
+                    </div>
+                </div>
+            </div> 
+            <h2>Cone cells:</h2>
+            <div>
+                <div id="coneCell-info-1" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                </div>
+                <div id="coneCell-info-2" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                </div>
+                <div id="coneCell-info-3" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                </div>
+                <div id="coneCell-info-4" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                </div>
+                <div id="coneCell-info-5" class="chemical-info">
+                    <canvas class="chemical-spectre"></canvas>
+                </div>
+            </div>
+    </div>
+
+
+    <div id="container">
+        <canvas id="canvas-left"></canvas>
+        <canvas id="canvas-right"></canvas>
+        <canvas id="canvas-coneCells"></canvas>
+        <br />
+        <img id="source-image" src="./LD_GrassFlowers_01_300x300.png" width="300" height="300">
+    </div>
+    
+</body>
+</html>

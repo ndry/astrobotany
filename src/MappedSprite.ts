@@ -1,6 +1,6 @@
 import { Chemical } from "./Chemical";
 import { Spectre } from "./Spectre";
-import { Vision } from "./Planet";
+import { Vision } from "./Vision";
 
 export class MappedSprite {
     constructor(
@@ -81,7 +81,8 @@ export class MappedSprite {
         ctx.putImageData(imageData, 0, 0, 0, 0, imageData.width, imageData.height);
 
         this.price = Math.floor(fullPrice / norm);
+        ctx.font = "20px arial";
         ctx.fillStyle = this.price > 0 ? "green" : "red";
-        ctx.fillText(this.price.toString(), 10, 10);
+        ctx.fillText(this.price.toString(), 0, 30);
     }
 }

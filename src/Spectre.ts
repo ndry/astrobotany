@@ -1,4 +1,3 @@
-import { Vision } from "./Planet";
 
 export class SpectreComponent {
     constructor(

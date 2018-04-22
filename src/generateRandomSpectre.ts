@@ -1,9 +1,9 @@
 import { Spectre, SpectreComponent } from "./Spectre";
 
 export function generateRandomSpectre() {
-    const components = Array.from({length: Math.round(Math.random() * 2 + 1)}, () => new SpectreComponent(
+    const components = Array.from({length: Math.round(Math.random() * 3 + 1)}, () => new SpectreComponent(
         (Math.random() - .5) * 2,
-        0.5 + (1 - Math.random() * Math.random()) * 10,
+        0.5 + (1 - Math.random() * Math.random()) * 5,
         1 / (.25 + Math.random()),
     ));
     let max = -Infinity;

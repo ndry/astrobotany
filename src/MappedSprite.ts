@@ -1,6 +1,7 @@
 import { Chemical } from "./Chemical";
 import { Spectre } from "./Spectre";
 import { Vision } from "./Vision";
+import * as debug from "./debug";
 
 export class MappedSprite {
     constructor(
@@ -15,11 +16,13 @@ export class MappedSprite {
     }
 
     price = 0;
+    lastCtx: CanvasRenderingContext2D | undefined;
 
     drawOnCtx(
         ctx: CanvasRenderingContext2D,
         vision: Vision,
     ) {
+        this.lastCtx = ctx;
         ctx.canvas.width = this.source.width;
         ctx.canvas.height = this.source.height;
         ctx.drawImage(this.source, 0, 0);
@@ -80,9 +83,14 @@ export class MappedSprite {
 
         ctx.putImageData(imageData, 0, 0, 0, 0, imageData.width, imageData.height);
 
-        this.price = Math.floor(fullPrice / norm);
-        ctx.font = "20px arial";
-        ctx.fillStyle = this.price > 0 ? "green" : "red";
-        ctx.fillText(this.price.toString(), 0, 30);
+        this.price = Math.floor(fullPrice / norm / 500 * 10) / 10;
+            
+        if (debug.drawPriceOverFlowers) {
+            ctx.font = "40px arial";
+            ctx.fillStyle = "rgba(0, 0, 0, .8)";
+            ctx.fillRect(10, 10, ctx.canvas.width - 10, 40);
+            ctx.fillStyle = this.price > 0 ? "lime" : "red";
+            ctx.fillText(this.price.toFixed(1), 10, 40);
+        }
     }
 }

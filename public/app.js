@@ -77,10 +77,20 @@ System.register("Chemical", [], function (exports_3, context_3) {
         }
     };
 });
-System.register("generateRandomSpectre", ["Spectre"], function (exports_4, context_4) {
+System.register("debug", [], function (exports_4, context_4) {
     var __moduleName = context_4 && context_4.id;
+    var drawPriceOverFlowers;
+    return {
+        setters: [],
+        execute: function () {
+            exports_4("drawPriceOverFlowers", drawPriceOverFlowers = false);
+        }
+    };
+});
+System.register("generateRandomSpectre", ["Spectre"], function (exports_5, context_5) {
+    var __moduleName = context_5 && context_5.id;
     function generateRandomSpectre() {
-        const components = Array.from({ length: Math.round(Math.random() * 2 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 10, 1 / (.25 + Math.random())));
+        const components = Array.from({ length: Math.round(Math.random() * 3 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 5, 1 / (.25 + Math.random())));
         let max = -Infinity;
         for (let x = -1; x <= 1; x += .01) {
             const fx = components.reduce((acc, c) => acc + c.intensivity(x), 0);
@@ -90,7 +100,7 @@ System.register("generateRandomSpectre", ["Spectre"], function (exports_4, conte
         }
         return new Spectre_1.Spectre(components, 1 / max);
     }
-    exports_4("generateRandomSpectre", generateRandomSpectre);
+    exports_5("generateRandomSpectre", generateRandomSpectre);
     var Spectre_1;
     return {
         setters: [
@@ -102,8 +112,8 @@ System.register("generateRandomSpectre", ["Spectre"], function (exports_4, conte
         }
     };
 });
-System.register("utils/misc", [], function (exports_5, context_5) {
-    var __moduleName = context_5 && context_5.id;
+System.register("utils/misc", [], function (exports_6, context_6) {
+    var __moduleName = context_6 && context_6.id;
     function isVisible(elt) {
         const style = window.getComputedStyle(elt);
         return (style.width !== null && +style.width !== 0)
@@ -112,18 +122,18 @@ System.register("utils/misc", [], function (exports_5, context_5) {
             && style.display !== "none"
             && style.visibility !== "hidden";
     }
-    exports_5("isVisible", isVisible);
+    exports_6("isVisible", isVisible);
     function adjust(x, ...applyAdjustmentList) {
         for (const applyAdjustment of applyAdjustmentList) {
             applyAdjustment(x);
         }
         return x;
     }
-    exports_5("adjust", adjust);
+    exports_6("adjust", adjust);
     function getRandomElement(array) {
         return array[Math.floor(Math.random() * array.length)];
     }
-    exports_5("getRandomElement", getRandomElement);
+    exports_6("getRandomElement", getRandomElement);
     function setPixel(imageData, x, y, r, g, b, a = 255) {
         const offset = (x * imageData.width + y) * 4;
         imageData.data[offset + 0] = r;
@@ -131,18 +141,22 @@ System.register("utils/misc", [], function (exports_5, context_5) {
         imageData.data[offset + 2] = b;
         imageData.data[offset + 3] = a;
     }
-    exports_5("setPixel", setPixel);
+    exports_6("setPixel", setPixel);
     return {
         setters: [],
         execute: function () {
         }
     };
 });
-System.register("MappedSprite", [], function (exports_6, context_6) {
-    var __moduleName = context_6 && context_6.id;
-    var MappedSprite;
+System.register("MappedSprite", ["debug"], function (exports_7, context_7) {
+    var __moduleName = context_7 && context_7.id;
+    var debug, MappedSprite;
     return {
-        setters: [],
+        setters: [
+            function (debug_1) {
+                debug = debug_1;
+            }
+        ],
         execute: function () {
             MappedSprite = class MappedSprite {
                 constructor(source, chemicalMap) {
@@ -151,6 +165,7 @@ System.register("MappedSprite", [], function (exports_6, context_6) {
                     this.price = 0;
                 }
                 drawOnCtx(ctx, vision) {
+                    this.lastCtx = ctx;
                     ctx.canvas.width = this.source.width;
                     ctx.canvas.height = this.source.height;
                     ctx.drawImage(this.source, 0, 0);
@@ -205,18 +220,22 @@ System.register("MappedSprite", [], function (exports_6, context_6) {
                         }
                     }
                     ctx.putImageData(imageData, 0, 0, 0, 0, imageData.width, imageData.height);
-                    this.price = Math.floor(fullPrice / norm);
-                    ctx.font = "20px arial";
-                    ctx.fillStyle = this.price > 0 ? "green" : "red";
-                    ctx.fillText(this.price.toString(), 0, 30);
+                    this.price = Math.floor(fullPrice / norm / 500 * 10) / 10;
+                    if (debug.drawPriceOverFlowers) {
+                        ctx.font = "40px arial";
+                        ctx.fillStyle = "rgba(0, 0, 0, .8)";
+                        ctx.fillRect(10, 10, ctx.canvas.width - 10, 40);
+                        ctx.fillStyle = this.price > 0 ? "lime" : "red";
+                        ctx.fillText(this.price.toFixed(1), 10, 40);
+                    }
                 }
             };
-            exports_6("MappedSprite", MappedSprite);
+            exports_7("MappedSprite", MappedSprite);
         }
     };
 });
-System.register("Planet", [], function (exports_7, context_7) {
-    var __moduleName = context_7 && context_7.id;
+System.register("Planet", [], function (exports_8, context_8) {
+    var __moduleName = context_8 && context_8.id;
     function getConeChemicalMap(coneCell, chemical) {
         const step = .01;
         let acc = 0;
@@ -225,7 +244,7 @@ System.register("Planet", [], function (exports_7, context_7) {
         }
         return acc;
     }
-    exports_7("getConeChemicalMap", getConeChemicalMap);
+    exports_8("getConeChemicalMap", getConeChemicalMap);
     var Planet;
     return {
         setters: [],
@@ -274,12 +293,12 @@ System.register("Planet", [], function (exports_7, context_7) {
                     }
                 }
             };
-            exports_7("Planet", Planet);
+            exports_8("Planet", Planet);
         }
     };
 });
-System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Planet", "MappedSprite"], function (exports_8, context_8) {
-    var __moduleName = context_8 && context_8.id;
+System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Planet", "MappedSprite"], function (exports_9, context_9) {
+    var __moduleName = context_9 && context_9.id;
     function renderSpectres() {
         planet.ensureVisionMap();
         const flowerChromes = document.getElementsByClassName("flower-chrome");
@@ -335,7 +354,7 @@ System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Pla
         ],
         execute: function () {
             planet = (() => {
-                const chemicals = Array.from({ length: 5 }, () => new Chemical_1.Chemical(generateRandomSpectre_1.generateRandomSpectre(), Math.round((Math.random() - .5) * Math.random() * Math.random() * 30)));
+                const chemicals = Array.from({ length: 5 }, (v, k) => new Chemical_1.Chemical(generateRandomSpectre_1.generateRandomSpectre(), Math.sign(k - 2) * Math.pow(k - 2, 2)));
                 return new Planet_1.Planet(chemicals, Array.from({ length: 10 }, () => generateRandomSpectre_1.generateRandomSpectre()), Array.from(document.getElementsByClassName("flower-image"))
                     .map(e => new MappedSprite_1.MappedSprite(e, {
                     r: misc_1.getRandomElement(chemicals),
@@ -382,12 +401,15 @@ System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Pla
                         }
                         else {
                             this.totalTime += dt;
-                            if (Math.random() < 0.5 * dt) {
+                            if (Math.random() < 0.75 * dt) {
                                 this.addFlower();
                             }
                         }
                         this.renderStats();
                     }, dt * 1000);
+                    for (let i = 0; i < 10; i++) {
+                        this.addFlower();
+                    }
                     this.renderStats();
                 }
                 renderStats() {
@@ -399,23 +421,52 @@ System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Pla
                     timeLeftLabel.innerText = this.timeLeft.toFixed(1);
                 }
                 addFlower() {
+                    const flowerScale = .5;
                     const gameField = document.getElementById("gameField");
                     const canvas = document.createElement("canvas");
+                    gameField.appendChild(canvas);
                     canvas.style.position = "absolute";
-                    canvas.style.left = Math.random() * gameField.clientWidth + "px";
-                    canvas.style.top = Math.random() * gameField.clientHeight + "px";
+                    const top = Math.random() * gameField.clientHeight;
+                    const left = Math.random() * gameField.clientWidth;
+                    canvas.style.left = left + "px";
+                    canvas.style.top = top + "px";
                     const flower = misc_1.getRandomElement(planet.flowers);
-                    canvas.width = flower.source.width;
-                    canvas.height = flower.source.height;
+                    canvas.width = flower.source.width * flowerScale;
+                    canvas.height = flower.source.height * flowerScale;
+                    canvas.style.zIndex = "10";
                     const ctx = canvas.getContext("2d");
-                    flower.drawOnCtx(ctx, planet.vision);
+                    ctx.drawImage(flower.lastCtx.canvas, 0, 0, canvas.width, canvas.height);
                     canvas.addEventListener("click", ev => {
                         if (!this.gameOver) {
-                            this.timeLeft += flower.price / 500;
+                            this.timeLeft += flower.price;
+                            const bonusLabel = document.createElement("label");
+                            bonusLabel.classList.add("bonus-label");
+                            if (flower.price > 0) {
+                                bonusLabel.classList.add("positive-bonus-label");
+                            }
+                            else {
+                                bonusLabel.classList.add("negative-bonus-label");
+                            }
+                            bonusLabel.innerText = flower.price.toFixed(1);
+                            bonusLabel.style.position = "absolute";
+                            bonusLabel.style.left = ev.layerX + left + "px";
+                            bonusLabel.style.top = ev.layerY + top + "px";
+                            bonusLabel.style.zIndex = "5";
+                            gameField.appendChild(bonusLabel);
+                            let c = 0;
+                            const anim = setInterval(() => {
+                                c++;
+                                bonusLabel.style.top = ev.layerY + top - c * 3 + "px";
+                                bonusLabel.style.left = ev.layerX + left + c + "px";
+                                bonusLabel.style.opacity = (1 - c / 20).toString();
+                                if (c > 20) {
+                                    clearInterval(anim);
+                                    gameField.removeChild(bonusLabel);
+                                }
+                            }, 50);
                             gameField.removeChild(canvas);
                         }
                     });
-                    gameField.appendChild(canvas);
                 }
             };
             startBtn = document.getElementById("startGame");

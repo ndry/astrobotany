@@ -8,7 +8,7 @@ import { MappedSprite } from "./MappedSprite";
 const planet = (() => {
     const chemicals = Array.from(
         {length: 5},
-        () => new Chemical(generateRandomSpectre(), Math.round((Math.random() - .5) * Math.random() * Math.random() * 30)));
+        (v, k) => new Chemical(generateRandomSpectre(), Math.sign(k - 2) * Math.pow(k - 2, 2)));
 
     return new Planet(
         chemicals,
@@ -112,12 +112,15 @@ class Game {
                 clearInterval(this.timerId);
             } else {
                 this.totalTime += dt;
-                if (Math.random() < 0.5 * dt) {
+                if (Math.random() < 0.75 * dt) {
                     this.addFlower();
                 }
             }
             this.renderStats();
         }, dt * 1000);
+        for (let i = 0; i < 10; i++) {
+            this.addFlower();
+        }
         this.renderStats();
     }
 
@@ -131,23 +134,55 @@ class Game {
     }
 
     addFlower() {
+        const flowerScale = .5;
+
         const gameField = document.getElementById("gameField") as HTMLDivElement;
         const canvas = document.createElement("canvas");
+        gameField.appendChild(canvas);
         canvas.style.position = "absolute";
-        canvas.style.left = Math.random() * gameField.clientWidth + "px";
-        canvas.style.top = Math.random() * gameField.clientHeight + "px";
+        const top = Math.random() * gameField.clientHeight;
+        const left = Math.random() * gameField.clientWidth;
+        canvas.style.left = left + "px";
+        canvas.style.top = top + "px";
         const flower = getRandomElement(planet.flowers);
-        canvas.width = flower.source.width;
-        canvas.height = flower.source.height;
+        canvas.width = flower.source.width * flowerScale;
+        canvas.height = flower.source.height * flowerScale;
+        canvas.style.zIndex = "10";
         const ctx = canvas.getContext("2d")!;
-        flower.drawOnCtx(ctx, planet.vision);
+        ctx.drawImage(flower.lastCtx!.canvas,
+            0, 0, canvas.width, canvas.height);
         canvas.addEventListener("click", ev => {
             if (!this.gameOver) {
-                this.timeLeft += flower.price / 500;
+                this.timeLeft += flower.price;
+                const bonusLabel = document.createElement("label");
+                bonusLabel.classList.add("bonus-label");
+                if (flower.price > 0) {
+                    bonusLabel.classList.add("positive-bonus-label");
+                } else {
+                    bonusLabel.classList.add("negative-bonus-label");
+                }
+                bonusLabel.innerText = flower.price.toFixed(1);
+                bonusLabel.style.position = "absolute";
+                bonusLabel.style.left = ev.layerX + left + "px";
+                bonusLabel.style.top = ev.layerY + top + "px";
+                bonusLabel.style.zIndex = "5";
+                gameField.appendChild(bonusLabel);
+                let c = 0;
+                const anim = setInterval(() => {
+                    c++;
+                    bonusLabel.style.top = ev.layerY + top - c * 3 + "px";
+                    bonusLabel.style.left = ev.layerX + left + c + "px";
+                    bonusLabel.style.opacity = (1 - c / 20).toString();
+                    if (c > 20) {
+                        clearInterval(anim);
+                        gameField.removeChild(bonusLabel);
+                    }
+                }, 50);
                 gameField.removeChild(canvas);
+                
             }
         });
-        gameField.appendChild(canvas);
+
     }
 }
 

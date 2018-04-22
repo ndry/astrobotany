@@ -11,8 +11,8 @@ const startScreen =  document.getElementById("startScreen")!;
 const flowersContainer = document.getElementById("flowers")!;
 const gameScreen = document.getElementById("gameScreen")!;
 
-if (!debug.showFlowersOnPage) {
-    flowersContainer.style.display = "none";
+if (debug.showFlowersOnPage) {
+    flowersContainer.style.display = "block";
 }
 
 gameScreen.style.display = "none";

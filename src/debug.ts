@@ -1,2 +1,2 @@
 export const drawPriceOverFlowers = false;
-export const showFlowersOnPage = true;
+export const showFlowersOnPage = false;

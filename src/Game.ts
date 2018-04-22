@@ -7,7 +7,7 @@ export class Game {
     public gameOver = false;
     public timerId: number;
 
-    public flowerScale = .5;
+    public flowerScale = .3;
 
     public flowers: HTMLCanvasElement[] = [];
 
@@ -53,7 +53,7 @@ export class Game {
             }
             this.renderStats();
         }, dt * 1000);
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 15; i++) {
             this.addFlower();
         }
         this.renderStats();
@@ -70,6 +70,18 @@ export class Game {
         if (this.timeLeft < 5) {
             timeLeftLabel.style.fontSize = (40 - (this.timeLeft * 10) % 5) + "px";
         }
+
+        const goatPlain = document.getElementById("goat-plain-ingame") as HTMLImageElement;
+        const goatSpace = document.getElementById("goat-space-ingame") as HTMLImageElement;
+        const goatSpace2 = document.getElementById("goat-space2-ingame") as HTMLImageElement;
+
+        goatPlain.style.display = this.timeLeft < 5 ? "none" : "block";        
+        goatSpace.style.display = this.timeLeft < 5
+            ? (Math.round(this.timeLeft * 5) % 2 ? "block" : "none")
+            : "none";
+        goatSpace2.style.display = this.timeLeft < 5
+            ? (Math.round(this.timeLeft * 5) % 2 ? "none" : "block")
+            : "none";
     }
 
     addFlower() {

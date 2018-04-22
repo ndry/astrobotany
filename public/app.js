@@ -84,7 +84,7 @@ System.register("debug", [], function (exports_4, context_4) {
         setters: [],
         execute: function () {
             exports_4("drawPriceOverFlowers", drawPriceOverFlowers = false);
-            exports_4("showFlowersOnPage", showFlowersOnPage = true);
+            exports_4("showFlowersOnPage", showFlowersOnPage = false);
         }
     };
 });
@@ -290,7 +290,7 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                     this.totalTime = 0;
                     this.timeLeft = 10;
                     this.gameOver = false;
-                    this.flowerScale = .5;
+                    this.flowerScale = .3;
                     this.flowers = [];
                     this.gameField = document.getElementById("gameField");
                     const canvasTerrain = document.getElementById("terrain");
@@ -319,7 +319,7 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                         }
                         this.renderStats();
                     }, dt * 1000);
-                    for (let i = 0; i < 10; i++) {
+                    for (let i = 0; i < 15; i++) {
                         this.addFlower();
                     }
                     this.renderStats();
@@ -335,6 +335,16 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                     if (this.timeLeft < 5) {
                         timeLeftLabel.style.fontSize = (40 - (this.timeLeft * 10) % 5) + "px";
                     }
+                    const goatPlain = document.getElementById("goat-plain-ingame");
+                    const goatSpace = document.getElementById("goat-space-ingame");
+                    const goatSpace2 = document.getElementById("goat-space2-ingame");
+                    goatPlain.style.display = this.timeLeft < 5 ? "none" : "block";
+                    goatSpace.style.display = this.timeLeft < 5
+                        ? (Math.round(this.timeLeft * 5) % 2 ? "block" : "none")
+                        : "none";
+                    goatSpace2.style.display = this.timeLeft < 5
+                        ? (Math.round(this.timeLeft * 5) % 2 ? "none" : "block")
+                        : "none";
                 }
                 addFlower() {
                     const flower = misc_1.getRandomElement(this.planet.flowers);
@@ -505,8 +515,8 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             startScreen = document.getElementById("startScreen");
             flowersContainer = document.getElementById("flowers");
             gameScreen = document.getElementById("gameScreen");
-            if (!debug.showFlowersOnPage) {
-                flowersContainer.style.display = "none";
+            if (debug.showFlowersOnPage) {
+                flowersContainer.style.display = "block";
             }
             gameScreen.style.display = "none";
             for (const e of Array.from(document.getElementsByClassName("color-choice-radio"))) {

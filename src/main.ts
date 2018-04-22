@@ -10,6 +10,7 @@ import * as debug from "./debug";
 const startScreen =  document.getElementById("startScreen")!;
 const flowersContainer = document.getElementById("flowers")!;
 const gameScreen = document.getElementById("gameScreen")!;
+const startBtn = document.getElementById("startGame") as HTMLButtonElement;
 
 if (debug.showFlowersOnPage) {
     flowersContainer.style.display = "block";
@@ -88,12 +89,24 @@ for (const e of Array.from(document.getElementsByClassName("color-choice-radio")
             }
         }
         renderSpectres(planet);
+
+        ensureVisonSelected();
     })
 }
 
+function ensureVisonSelected() {
+    if (planet.vision.r || planet.vision.g || planet.vision.b) {
+        startBtn.disabled = false;
+        startBtn.value = "Go!";
+    } else {
+        startBtn.disabled = true;
+        startBtn.value = "Select some vision";
+    }
+}
 
 let planet = generateRandomPlanet();
 renderSpectres(planet);
+ensureVisonSelected();
 
 const rerollBtn = document.getElementById("reroll") as HTMLButtonElement;
 rerollBtn.addEventListener("click", ev => {
@@ -113,11 +126,11 @@ rerollBtn.addEventListener("click", ev => {
 
     planet = generateRandomPlanet();
     renderSpectres(planet);
+    ensureVisonSelected();
 });
 
 
 let game: Game | undefined;
-const startBtn = document.getElementById("startGame") as HTMLButtonElement;
 startBtn.addEventListener("click", ev => {
     for (const el of Array.from(document.getElementsByClassName("startScreen-tohide"))) {
         const tohide = el as HTMLElement;

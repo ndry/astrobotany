@@ -498,7 +498,17 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
                 + `${coneCell1 === planet.vision.b ? 255 : 0}, 1)`);
         }
     }
-    var Game_1, generator_1, debug, startScreen, flowersContainer, gameScreen, planet, rerollBtn, game, startBtn;
+    function ensureVisonSelected() {
+        if (planet.vision.r || planet.vision.g || planet.vision.b) {
+            startBtn.disabled = false;
+            startBtn.value = "Go!";
+        }
+        else {
+            startBtn.disabled = true;
+            startBtn.value = "Select some vision";
+        }
+    }
+    var Game_1, generator_1, debug, startScreen, flowersContainer, gameScreen, startBtn, planet, rerollBtn, game;
     return {
         setters: [
             function (Game_1_1) {
@@ -515,6 +525,7 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             startScreen = document.getElementById("startScreen");
             flowersContainer = document.getElementById("flowers");
             gameScreen = document.getElementById("gameScreen");
+            startBtn = document.getElementById("startGame");
             if (debug.showFlowersOnPage) {
                 flowersContainer.style.display = "block";
             }
@@ -540,10 +551,12 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
                         }
                     }
                     renderSpectres(planet);
+                    ensureVisonSelected();
                 });
             }
             planet = generator_1.generateRandomPlanet();
             renderSpectres(planet);
+            ensureVisonSelected();
             rerollBtn = document.getElementById("reroll");
             rerollBtn.addEventListener("click", ev => {
                 for (const el of Array.from(document.getElementsByClassName("startScreen-tohide"))) {
@@ -558,8 +571,8 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
                 }
                 planet = generator_1.generateRandomPlanet();
                 renderSpectres(planet);
+                ensureVisonSelected();
             });
-            startBtn = document.getElementById("startGame");
             startBtn.addEventListener("click", ev => {
                 for (const el of Array.from(document.getElementsByClassName("startScreen-tohide"))) {
                     const tohide = el;

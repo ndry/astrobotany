@@ -1,3 +1,5 @@
+import { Vision } from "./Planet";
+
 export class SpectreComponent {
     constructor(
         public xshift: number,
@@ -7,8 +9,8 @@ export class SpectreComponent {
 
     }
 
-    value(x: number) {
-        return Math.pow(Math.E, -Math.pow((x - this.xshift) * this.xscale, 2)) * this.yscale;
+    intensivity(wavelength: number) {
+        return Math.pow(Math.E, -Math.pow((wavelength - this.xshift) * this.xscale, 2)) * this.yscale;
     }
 }
 
@@ -20,20 +22,27 @@ export class Spectre {
 
     }
 
-    value(x: number) {
-        return this.components.reduce((acc, c) => acc + c.value(x), 0) * this.scale;
+    intensivity(wavelength: number) {
+        return this.components.reduce((acc, c) => acc + c.intensivity(wavelength), 0) * this.scale;
     }
 
-    drawOnCtx(ctx: CanvasRenderingContext2D) {
+    // view
+    drawOnCtx(ctx: CanvasRenderingContext2D, fillStyle: string | undefined = undefined) {
         const w = ctx.canvas.width;
         const h = ctx.canvas.height;
 
         const step = 2 / w;
 
         ctx.beginPath();
-        ctx.moveTo(0, 0);
+        ctx.moveTo(0, h);
         for (let x = -1; x < 1; x += step) {
-            ctx.lineTo((x + 1) / step, h - h * this.value(x));
+            ctx.lineTo((x + 1) / step, h - h * this.intensivity(x));
+        }
+        ctx.lineTo(w, h);
+        ctx.closePath();
+        if (fillStyle) {
+            ctx.fillStyle = fillStyle;
+            ctx.fill();
         }
         ctx.strokeStyle = "white";
         ctx.stroke();

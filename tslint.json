@@ -12,6 +12,7 @@
             "anonymous": "always",
             "named": "never",
             "asyncArrow": "always"
-        }]
+        }],
+        "object-literal-sort-keys": false,
     }
 }

@@ -3,7 +3,7 @@ import { getRandomElement } from "./utils/misc";
 
 export class Game {
     public totalTime = 0;
-    public timeLeft = 10;
+    public timeLeft = 20;
     public gameOver = false;
     public timerId: number;
 
@@ -115,15 +115,17 @@ export class Game {
                 }
                 bonusLabel.innerText = flower.price.toFixed(1);
                 bonusLabel.style.position = "absolute";
-                bonusLabel.style.left = ev.layerX + left + "px";
-                bonusLabel.style.top = ev.layerY + top + "px";
+                const bonusLabelX = ev.offsetX + left;
+                const bonusLabelY = ev.offsetY + top;
+                bonusLabel.style.left = bonusLabelX + "px";
+                bonusLabel.style.top = bonusLabelY + "px";
                 bonusLabel.style.zIndex = "5";
                 this.gameField.appendChild(bonusLabel);
                 let c = 0;
                 const anim = setInterval(() => {
                     c++;
-                    bonusLabel.style.top = ev.layerY + top - c * 3 + "px";
-                    bonusLabel.style.left = ev.layerX + left + c + "px";
+                    bonusLabel.style.left = bonusLabelX - c * 3 + "px";
+                    bonusLabel.style.top = bonusLabelY + c + "px";
                     bonusLabel.style.opacity = (1 - c / 20).toString();
                     if (c > 20) {
                         clearInterval(anim);

@@ -12,6 +12,20 @@ const flowersContainer = document.getElementById("flowers")!;
 const gameScreen = document.getElementById("gameScreen")!;
 const startBtn = document.getElementById("startGame") as HTMLButtonElement;
 
+const splashScreen =  document.getElementById("splashScreen")!;
+
+let splashCounter = 0;
+const splashIntervalHandler = setInterval(() => {
+    splashCounter++;
+    splashScreen.style.opacity = (1 - splashCounter / 20).toString();
+    startScreen.style.opacity = (splashCounter / 20).toString();
+    if (splashCounter > 18) {
+        clearInterval(splashIntervalHandler);
+        splashScreen.remove();
+    }
+}, 50);
+
+
 if (debug.showFlowersOnPage) {
     flowersContainer.style.display = "block";
 }

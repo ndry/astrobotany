@@ -8,19 +8,26 @@ html, body {
 }
 
 
+#startScreen, #splashScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+#splashScreen {
+    z-index: 25;
+}
+
 #startScreen {
     z-index: 5;
     color: white;
     background-color: black;
     width: 1000px;
     text-align: center;
-    margin: auto;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    opacity: 0;
 }
+
 
 #startScreen .chemical-info {
     position: relative;

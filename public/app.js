@@ -288,7 +288,7 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                 constructor(planet) {
                     this.planet = planet;
                     this.totalTime = 0;
-                    this.timeLeft = 10;
+                    this.timeLeft = 20;
                     this.gameOver = false;
                     this.flowerScale = .3;
                     this.flowers = [];
@@ -374,15 +374,17 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                             }
                             bonusLabel.innerText = flower.price.toFixed(1);
                             bonusLabel.style.position = "absolute";
-                            bonusLabel.style.left = ev.layerX + left + "px";
-                            bonusLabel.style.top = ev.layerY + top + "px";
+                            const bonusLabelX = ev.offsetX + left;
+                            const bonusLabelY = ev.offsetY + top;
+                            bonusLabel.style.left = bonusLabelX + "px";
+                            bonusLabel.style.top = bonusLabelY + "px";
                             bonusLabel.style.zIndex = "5";
                             this.gameField.appendChild(bonusLabel);
                             let c = 0;
                             const anim = setInterval(() => {
                                 c++;
-                                bonusLabel.style.top = ev.layerY + top - c * 3 + "px";
-                                bonusLabel.style.left = ev.layerX + left + c + "px";
+                                bonusLabel.style.left = bonusLabelX - c * 3 + "px";
+                                bonusLabel.style.top = bonusLabelY + c + "px";
                                 bonusLabel.style.opacity = (1 - c / 20).toString();
                                 if (c > 20) {
                                     clearInterval(anim);
@@ -508,7 +510,7 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             startBtn.value = "Select some vision";
         }
     }
-    var Game_1, generator_1, debug, startScreen, flowersContainer, gameScreen, startBtn, planet, rerollBtn, game;
+    var Game_1, generator_1, debug, startScreen, flowersContainer, gameScreen, startBtn, splashScreen, splashCounter, splashIntervalHandler, planet, rerollBtn, game;
     return {
         setters: [
             function (Game_1_1) {
@@ -526,6 +528,17 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             flowersContainer = document.getElementById("flowers");
             gameScreen = document.getElementById("gameScreen");
             startBtn = document.getElementById("startGame");
+            splashScreen = document.getElementById("splashScreen");
+            splashCounter = 0;
+            splashIntervalHandler = setInterval(() => {
+                splashCounter++;
+                splashScreen.style.opacity = (1 - splashCounter / 20).toString();
+                startScreen.style.opacity = (splashCounter / 20).toString();
+                if (splashCounter > 18) {
+                    clearInterval(splashIntervalHandler);
+                    splashScreen.remove();
+                }
+            }, 50);
             if (debug.showFlowersOnPage) {
                 flowersContainer.style.display = "block";
             }

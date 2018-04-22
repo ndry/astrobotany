@@ -5,6 +5,7 @@
 <meta charset="utf-8" />
 <title>astrobotany</title>
 <link rel="icon" href="./favicon.ico">
+<link rel="stylesheet" href="style.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.20.19/system.js"></script>
 <script src="./system.config.js"></script>
@@ -17,71 +18,6 @@
     });
 </script>
 <style>
-    html, body {
-        background-color: black;
-        width   : 100%;
-        height  : 100%;
-        margin  : 0;
-        padding : 0;
-    }
-    #container {
-        width: 1210px;
-        height: 610px;
-        position: relative;
-    }
-    #canvas {
-        position: absolute;
-        width: 1210px;
-        height: 610px;
-    }
-    #canvas-left, #canvas-right {
-        width: 300px;
-        height: 300px;
-    }
-    #canvas-coneCells {
-        width: 256px;
-        height: 256px;
-    }
-
-    #startScreen {
-        /* position: absolute; */
-        z-index: 5;
-        color: white;
-        background-color: black;
-        left: 0;
-        right: 0;
-    }
-
-    #startScreen .chemical-info {
-        position: relative;
-        margin: 5px;
-        display: inline-block;
-    }
-
-    #startScreen .chemical-spectre {
-        width: 140px;
-        height: 65px;
-        border: 1px white solid;
-        background-color: #808080;
-        display: inline-block;
-    }
-
-    #startScreen .chemical-value {
-        position: absolute;
-        right: 0;
-        top: 0;
-        border: 1px white solid;
-        z-index: 10;
-        color: white;
-    }
-
-    .color-choice {
-        display: inline-block;
-    }
-
-    .color-choice input {
-        display: block;
-    }
 
     #gameScreen {
         position: relative;
@@ -132,130 +68,168 @@
 </head>
 <body>
     <div id="startScreen">
-            <h2>Planet chemicals:</h2>
-            <div>
-                <div id="chemical-info-1" class="chemical-info">
-                    <canvas class="chemical-spectre"></canvas>
-                    <div class="chemical-value">
-                        +10
+            <h2>Chemicals on this planet</h2>
+            <h3>spectrogram & value</h3>
+            <div class="chemical-scale">
+                <div class="chemical-scale-worst">☠</div>
+                <div>
+                    <div id="chemical-info-1" class="chemical-info">
+                        <canvas class="chemical-spectre"></canvas>
+                        <div class="chemical-value">
+                            +10
+                        </div>
+                    </div>
+                    <div id="chemical-info-2" class="chemical-info">
+                        <canvas class="chemical-spectre"></canvas>
+                        <div class="chemical-value">
+                            +10
+                        </div>
+                    </div>
+                    <div id="chemical-info-3" class="chemical-info">
+                        <canvas class="chemical-spectre"></canvas>
+                        <div class="chemical-value">
+                            +10
+                        </div>
+                    </div>
+                    <div id="chemical-info-4" class="chemical-info">
+                        <canvas class="chemical-spectre"></canvas>
+                        <div class="chemical-value">
+                            +10
+                        </div>
+                    </div>
+                    <div id="chemical-info-5" class="chemical-info">
+                        <canvas class="chemical-spectre"></canvas>
+                        <div class="chemical-value">
+                            +10
+                        </div>
                     </div>
                 </div>
-                <div id="chemical-info-2" class="chemical-info">
-                    <canvas class="chemical-spectre"></canvas>
-                    <div class="chemical-value">
-                        +10
-                    </div>
-                </div>
-                <div id="chemical-info-3" class="chemical-info">
-                    <canvas class="chemical-spectre"></canvas>
-                    <div class="chemical-value">
-                        +10
-                    </div>
-                </div>
-                <div id="chemical-info-4" class="chemical-info">
-                    <canvas class="chemical-spectre"></canvas>
-                    <div class="chemical-value">
-                        +10
-                    </div>
-                </div>
-                <div id="chemical-info-5" class="chemical-info">
-                    <canvas class="chemical-spectre"></canvas>
-                    <div class="chemical-value">
-                        +10
-                    </div>
-                </div>
+                <div class="chemical-scale-best">☺</div>
+                    
             </div> 
-            <h2>Cone cells:</h2>
+            <h2>Available cone cells
+                    <div class="color-choice color-choice-reset">
+                            <input type="radio" class="color-choice-radio color-choice-radio-reset color-choice-radio-red" id="red-choice-0" name="red-choice" value="0" checked>
+                            <label class="color-choice-label color-choice-label-reset color-choice-label-red" for="red-choice-0"></label>
+                            <input type="radio" class="color-choice-radio color-choice-radio-reset color-choice-radio-green" id="green-choice-0" name="green-choice" value="0" checked>
+                            <label class="color-choice-label color-choice-label-reset color-choice-label-green" for="green-choice-0"></label>
+                            <input type="radio" class="color-choice-radio color-choice-radio-reset color-choice-radio-blue" id="blue-choice-0" name="blue-choice" value="0" checked>
+                            <label class="color-choice-label color-choice-label-reset" for="blue-choice-0"></label>
+                        </div>
+            </h2>
             <div>
-                <div id="coneCell-info-0" class="chemical-info">
-                    reset
-                    <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-0" name="red-choice" value="0" checked>
-                        <input type="radio" class="color-choice-radio" id="green-choice-0" name="green-choice" value="0" checked>
-                        <input type="radio" class="color-choice-radio" id="blue-choice-0" name="blue-choice" value="0" checked>
-                    </div>
-                </div>
                 <div id="coneCell-info-1" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-1" name="red-choice" value="1">
-                        <input type="radio" class="color-choice-radio" id="green-choice-1" name="green-choice" value="1">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-1" name="blue-choice" value="1">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-1" name="red-choice" value="1">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-1"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-1" name="green-choice" value="1">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-1"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-1" name="blue-choice" value="1">
+                        <label class="color-choice-label" for="blue-choice-1"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-2" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-2" name="red-choice" value="2">
-                        <input type="radio" class="color-choice-radio" id="green-choice-2" name="green-choice" value="2">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-2" name="blue-choice" value="2">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-2" name="red-choice" value="2">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-2"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-2" name="green-choice" value="2">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-2"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-2" name="blue-choice" value="2">
+                        <label class="color-choice-label" for="blue-choice-2"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-3" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-3" name="red-choice" value="3">
-                        <input type="radio" class="color-choice-radio" id="green-choice-3" name="green-choice" value="3">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-3" name="blue-choice" value="3">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-3" name="red-choice" value="3">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-3"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-3" name="green-choice" value="3">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-3"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-3" name="blue-choice" value="3">
+                        <label class="color-choice-label" for="blue-choice-3"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-4" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-4" name="red-choice" value="4">
-                        <input type="radio" class="color-choice-radio" id="green-choice-4" name="green-choice" value="4">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-4" name="blue-choice" value="4">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-4" name="red-choice" value="4">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-4"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-4" name="green-choice" value="4">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-4"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-4" name="blue-choice" value="4">
+                        <label class="color-choice-label" for="blue-choice-4"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-5" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-5" name="red-choice" value="5">
-                        <input type="radio" class="color-choice-radio" id="green-choice-5" name="green-choice" value="5">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-5" name="blue-choice" value="5">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-5" name="red-choice" value="5">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-5"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-5" name="green-choice" value="5">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-5"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-5" name="blue-choice" value="5">
+                        <label class="color-choice-label" for="blue-choice-5"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-6" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-6" name="red-choice" value="6">
-                        <input type="radio" class="color-choice-radio" id="green-choice-6" name="green-choice" value="6">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-6" name="blue-choice" value="6">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-6" name="red-choice" value="6">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-6"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-6" name="green-choice" value="6">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-6"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-6" name="blue-choice" value="6">
+                        <label class="color-choice-label" for="blue-choice-6"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-7" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-7" name="red-choice" value="7">
-                        <input type="radio" class="color-choice-radio" id="green-choice-7" name="green-choice" value="7">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-7" name="blue-choice" value="7">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-7" name="red-choice" value="7">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-7"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-7" name="green-choice" value="7">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-7"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-7" name="blue-choice" value="7">
+                        <label class="color-choice-label" for="blue-choice-7"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-8" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-8" name="red-choice" value="8">
-                        <input type="radio" class="color-choice-radio" id="green-choice-8" name="green-choice" value="8">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-8" name="blue-choice" value="8">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-8" name="red-choice" value="8">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-8"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-8" name="green-choice" value="8">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-8"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-8" name="blue-choice" value="8">
+                        <label class="color-choice-label" for="blue-choice-8"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-9" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-9" name="red-choice" value="9">
-                        <input type="radio" class="color-choice-radio" id="green-choice-9" name="green-choice" value="9">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-9" name="blue-choice" value="9">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-9" name="red-choice" value="9">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-9"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-9" name="green-choice" value="9">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-9"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-9" name="blue-choice" value="9">
+                        <label class="color-choice-label" for="blue-choice-9"></label>
                     </div>
                 </div>
                 <div id="coneCell-info-10" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
-                        <input type="radio" class="color-choice-radio" id="red-choice-10" name="red-choice" value="10">
-                        <input type="radio" class="color-choice-radio" id="green-choice-10" name="green-choice" value="10">
-                        <input type="radio" class="color-choice-radio" id="blue-choice-10" name="blue-choice" value="10">
+                        <input type="radio" class="color-choice-radio color-choice-radio-red" id="red-choice-10" name="red-choice" value="10">
+                        <label class="color-choice-label color-choice-label-red" for="red-choice-10"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-green" id="green-choice-10" name="green-choice" value="10">
+                        <label class="color-choice-label color-choice-label-green" for="green-choice-10"></label>
+                        <input type="radio" class="color-choice-radio color-choice-radio-blue" id="blue-choice-10" name="blue-choice" value="10">
+                        <label class="color-choice-label" for="blue-choice-10"></label>
                     </div>
                 </div>
             </div>
+            <input type="button" id="reroll" value="Reroll">
             <input type="button" id="startGame" value="Go!">
     </div>
     <div id="gameScreen">
@@ -266,7 +240,7 @@
             <label id="gameOver-label">Game Over!</label>
         </div>
     </div>
-    <div>
+    <div id="flowers">
         <div>
                 <canvas class="flower-chrome"></canvas>
                 <canvas class="flower-chrome"></canvas>
@@ -285,21 +259,21 @@
                 <canvas class="flower-chrome"></canvas>
             </div>
             <div>
-                <img class="flower-image" src="./LD_flower01.png">
-                <img class="flower-image" src="./LD_flower02.png">
-                <img class="flower-image" src="./LD_flower03.png">
-                <img class="flower-image" src="./LD_flower04.png">
-                <img class="flower-image" src="./LD_flower05.png">
-                <img class="flower-image" src="./LD_flower06.png">
-                <img class="flower-image" src="./LD_flower07.png">
-                <img class="flower-image" src="./LD_flower08.png">
-                <img class="flower-image" src="./LD_flower09.png">
-                <img class="flower-image" src="./LD_flower10.png">
-                <img class="flower-image" src="./LD_flower11.png">
-                <img class="flower-image" src="./LD_flower12.png">
-                <img class="flower-image" src="./LD_flower13.png">
-                <img class="flower-image" src="./LD_flower14.png">
-                <img class="flower-image" src="./LD_flower15.png">
+                <img class="flower-image" src="./assets/LD_flower01.png">
+                <img class="flower-image" src="./assets/LD_flower02.png">
+                <img class="flower-image" src="./assets/LD_flower03.png">
+                <img class="flower-image" src="./assets/LD_flower04.png">
+                <img class="flower-image" src="./assets/LD_flower05.png">
+                <img class="flower-image" src="./assets/LD_flower06.png">
+                <img class="flower-image" src="./assets/LD_flower07.png">
+                <img class="flower-image" src="./assets/LD_flower08.png">
+                <img class="flower-image" src="./assets/LD_flower09.png">
+                <img class="flower-image" src="./assets/LD_flower10.png">
+                <img class="flower-image" src="./assets/LD_flower11.png">
+                <img class="flower-image" src="./assets/LD_flower12.png">
+                <img class="flower-image" src="./assets/LD_flower13.png">
+                <img class="flower-image" src="./assets/LD_flower14.png">
+                <img class="flower-image" src="./assets/LD_flower15.png">
             </div>
     </div>
 </body>

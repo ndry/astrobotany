@@ -79,77 +79,17 @@ System.register("Chemical", [], function (exports_3, context_3) {
 });
 System.register("debug", [], function (exports_4, context_4) {
     var __moduleName = context_4 && context_4.id;
-    var drawPriceOverFlowers;
+    var drawPriceOverFlowers, showFlowersOnPage;
     return {
         setters: [],
         execute: function () {
-            exports_4("drawPriceOverFlowers", drawPriceOverFlowers = false);
+            exports_4("drawPriceOverFlowers", drawPriceOverFlowers = true);
+            exports_4("showFlowersOnPage", showFlowersOnPage = false);
         }
     };
 });
-System.register("generateRandomSpectre", ["Spectre"], function (exports_5, context_5) {
+System.register("MappedSprite", ["debug"], function (exports_5, context_5) {
     var __moduleName = context_5 && context_5.id;
-    function generateRandomSpectre() {
-        const components = Array.from({ length: Math.round(Math.random() * 3 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 5, 1 / (.25 + Math.random())));
-        let max = -Infinity;
-        for (let x = -1; x <= 1; x += .01) {
-            const fx = components.reduce((acc, c) => acc + c.intensivity(x), 0);
-            if (fx > max) {
-                max = fx;
-            }
-        }
-        return new Spectre_1.Spectre(components, 1 / max);
-    }
-    exports_5("generateRandomSpectre", generateRandomSpectre);
-    var Spectre_1;
-    return {
-        setters: [
-            function (Spectre_1_1) {
-                Spectre_1 = Spectre_1_1;
-            }
-        ],
-        execute: function () {
-        }
-    };
-});
-System.register("utils/misc", [], function (exports_6, context_6) {
-    var __moduleName = context_6 && context_6.id;
-    function isVisible(elt) {
-        const style = window.getComputedStyle(elt);
-        return (style.width !== null && +style.width !== 0)
-            && (style.height !== null && +style.height !== 0)
-            && (style.opacity !== null && +style.opacity !== 0)
-            && style.display !== "none"
-            && style.visibility !== "hidden";
-    }
-    exports_6("isVisible", isVisible);
-    function adjust(x, ...applyAdjustmentList) {
-        for (const applyAdjustment of applyAdjustmentList) {
-            applyAdjustment(x);
-        }
-        return x;
-    }
-    exports_6("adjust", adjust);
-    function getRandomElement(array) {
-        return array[Math.floor(Math.random() * array.length)];
-    }
-    exports_6("getRandomElement", getRandomElement);
-    function setPixel(imageData, x, y, r, g, b, a = 255) {
-        const offset = (x * imageData.width + y) * 4;
-        imageData.data[offset + 0] = r;
-        imageData.data[offset + 1] = g;
-        imageData.data[offset + 2] = b;
-        imageData.data[offset + 3] = a;
-    }
-    exports_6("setPixel", setPixel);
-    return {
-        setters: [],
-        execute: function () {
-        }
-    };
-});
-System.register("MappedSprite", ["debug"], function (exports_7, context_7) {
-    var __moduleName = context_7 && context_7.id;
     var debug, MappedSprite;
     return {
         setters: [
@@ -230,12 +170,12 @@ System.register("MappedSprite", ["debug"], function (exports_7, context_7) {
                     }
                 }
             };
-            exports_7("MappedSprite", MappedSprite);
+            exports_5("MappedSprite", MappedSprite);
         }
     };
 });
-System.register("Planet", [], function (exports_8, context_8) {
-    var __moduleName = context_8 && context_8.id;
+System.register("Planet", [], function (exports_6, context_6) {
+    var __moduleName = context_6 && context_6.id;
     function getConeChemicalMap(coneCell, chemical) {
         const step = .01;
         let acc = 0;
@@ -244,7 +184,7 @@ System.register("Planet", [], function (exports_8, context_8) {
         }
         return acc;
     }
-    exports_8("getConeChemicalMap", getConeChemicalMap);
+    exports_6("getConeChemicalMap", getConeChemicalMap);
     var Planet;
     return {
         setters: [],
@@ -293,99 +233,56 @@ System.register("Planet", [], function (exports_8, context_8) {
                     }
                 }
             };
-            exports_8("Planet", Planet);
+            exports_6("Planet", Planet);
         }
     };
 });
-System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Planet", "MappedSprite"], function (exports_9, context_9) {
-    var __moduleName = context_9 && context_9.id;
-    function renderSpectres() {
-        planet.ensureVisionMap();
-        const flowerChromes = document.getElementsByClassName("flower-chrome");
-        for (let i = 0; i < planet.flowers.length; i++) {
-            const s = planet.flowers[i];
-            const c = flowerChromes[i];
-            c.width = c.clientWidth;
-            c.height = c.clientHeight;
-            const cctx = c.getContext("2d");
-            s.drawOnCtx(cctx, planet.vision);
-        }
-        for (let i = 1; i <= 5; i++) {
-            const chemical = planet.chemicals[i - 1];
-            const ci1 = document.getElementById(`chemical-info-${i}`);
-            const ci1c = ci1.getElementsByClassName("chemical-spectre")[0];
-            ci1c.width = ci1c.clientWidth;
-            ci1c.height = ci1c.clientHeight;
-            const ci1cctx = ci1c.getContext("2d");
-            chemical.drawOnCtx(ci1cctx, planet.vision);
-            const ci1p = ci1.getElementsByClassName("chemical-value")[0];
-            ci1p.innerText = chemical.price.toString();
-        }
-        for (let i = 1; i <= 10; i++) {
-            const coneCell1 = planet.coneCells[i - 1];
-            const ci1 = document.getElementById(`coneCell-info-${i}`);
-            const ci1c = ci1.getElementsByClassName("chemical-spectre")[0];
-            ci1c.width = ci1c.clientWidth;
-            ci1c.height = ci1c.clientHeight;
-            const ci1cctx = ci1c.getContext("2d");
-            coneCell1.drawOnCtx(ci1cctx, `rgba(${coneCell1 === planet.vision.r ? 255 : 0},`
-                + `${coneCell1 === planet.vision.g ? 255 : 0},`
-                + `${coneCell1 === planet.vision.b ? 255 : 0}, 1)`);
-        }
+System.register("utils/misc", [], function (exports_7, context_7) {
+    var __moduleName = context_7 && context_7.id;
+    function isVisible(elt) {
+        const style = window.getComputedStyle(elt);
+        return (style.width !== null && +style.width !== 0)
+            && (style.height !== null && +style.height !== 0)
+            && (style.opacity !== null && +style.opacity !== 0)
+            && style.display !== "none"
+            && style.visibility !== "hidden";
     }
-    var misc_1, Chemical_1, generateRandomSpectre_1, Planet_1, MappedSprite_1, planet, Game, startBtn;
+    exports_7("isVisible", isVisible);
+    function adjust(x, ...applyAdjustmentList) {
+        for (const applyAdjustment of applyAdjustmentList) {
+            applyAdjustment(x);
+        }
+        return x;
+    }
+    exports_7("adjust", adjust);
+    function getRandomElement(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
+    exports_7("getRandomElement", getRandomElement);
+    function setPixel(imageData, x, y, r, g, b, a = 255) {
+        const offset = (x * imageData.width + y) * 4;
+        imageData.data[offset + 0] = r;
+        imageData.data[offset + 1] = g;
+        imageData.data[offset + 2] = b;
+        imageData.data[offset + 3] = a;
+    }
+    exports_7("setPixel", setPixel);
+    return {
+        setters: [],
+        execute: function () {
+        }
+    };
+});
+System.register("Game", ["utils/misc"], function (exports_8, context_8) {
+    var __moduleName = context_8 && context_8.id;
+    var misc_1, Game;
     return {
         setters: [
             function (misc_1_1) {
                 misc_1 = misc_1_1;
-            },
-            function (Chemical_1_1) {
-                Chemical_1 = Chemical_1_1;
-            },
-            function (generateRandomSpectre_1_1) {
-                generateRandomSpectre_1 = generateRandomSpectre_1_1;
-            },
-            function (Planet_1_1) {
-                Planet_1 = Planet_1_1;
-            },
-            function (MappedSprite_1_1) {
-                MappedSprite_1 = MappedSprite_1_1;
             }
         ],
         execute: function () {
-            planet = (() => {
-                const chemicals = Array.from({ length: 5 }, (v, k) => new Chemical_1.Chemical(generateRandomSpectre_1.generateRandomSpectre(), Math.sign(k - 2) * Math.pow(k - 2, 2)));
-                return new Planet_1.Planet(chemicals, Array.from({ length: 10 }, () => generateRandomSpectre_1.generateRandomSpectre()), Array.from(document.getElementsByClassName("flower-image"))
-                    .map(e => new MappedSprite_1.MappedSprite(e, {
-                    r: misc_1.getRandomElement(chemicals),
-                    g: misc_1.getRandomElement(chemicals),
-                    b: misc_1.getRandomElement(chemicals),
-                })));
-            })();
-            for (const e of Array.from(document.getElementsByClassName("color-choice-radio"))) {
-                e.addEventListener("click", ev => {
-                    const el = ev.srcElement;
-                    const coneCell = el.value === "0"
-                        ? undefined
-                        : planet.coneCells[(+el.value) - 1];
-                    switch (el.name) {
-                        case "red-choice": {
-                            planet.vision.r = coneCell;
-                            break;
-                        }
-                        case "green-choice": {
-                            planet.vision.g = coneCell;
-                            break;
-                        }
-                        case "blue-choice": {
-                            planet.vision.b = coneCell;
-                            break;
-                        }
-                    }
-                    renderSpectres();
-                });
-            }
-            renderSpectres();
             Game = class Game {
                 constructor(planet) {
                     this.planet = planet;
@@ -430,7 +327,7 @@ System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Pla
                     const left = Math.random() * gameField.clientWidth;
                     canvas.style.left = left + "px";
                     canvas.style.top = top + "px";
-                    const flower = misc_1.getRandomElement(planet.flowers);
+                    const flower = misc_1.getRandomElement(this.planet.flowers);
                     canvas.width = flower.source.width * flowerScale;
                     canvas.height = flower.source.height * flowerScale;
                     canvas.style.zIndex = "10";
@@ -469,6 +366,147 @@ System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Pla
                     });
                 }
             };
+            exports_8("Game", Game);
+        }
+    };
+});
+System.register("generator", ["Spectre", "Chemical", "Planet", "MappedSprite", "utils/misc"], function (exports_9, context_9) {
+    var __moduleName = context_9 && context_9.id;
+    function generateRandomSpectre() {
+        const components = Array.from({ length: Math.round(Math.random() * 3 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 5, 1 / (.25 + Math.random())));
+        let max = -Infinity;
+        for (let x = -1; x <= 1; x += .01) {
+            const fx = components.reduce((acc, c) => acc + c.intensivity(x), 0);
+            if (fx > max) {
+                max = fx;
+            }
+        }
+        return new Spectre_1.Spectre(components, 1 / max);
+    }
+    exports_9("generateRandomSpectre", generateRandomSpectre);
+    function generateRandomPlanet() {
+        const chemicals = Array.from({ length: 5 }, (v, k) => new Chemical_1.Chemical(generateRandomSpectre(), Math.sign(k - 2) * Math.pow(k - 2, 2)));
+        return new Planet_1.Planet(chemicals, Array.from({ length: 10 }, () => generateRandomSpectre()), Array.from(document.getElementsByClassName("flower-image"))
+            .map(e => new MappedSprite_1.MappedSprite(e, {
+            r: misc_2.getRandomElement(chemicals),
+            g: misc_2.getRandomElement(chemicals),
+            b: misc_2.getRandomElement(chemicals),
+        })));
+    }
+    exports_9("generateRandomPlanet", generateRandomPlanet);
+    var Spectre_1, Chemical_1, Planet_1, MappedSprite_1, misc_2;
+    return {
+        setters: [
+            function (Spectre_1_1) {
+                Spectre_1 = Spectre_1_1;
+            },
+            function (Chemical_1_1) {
+                Chemical_1 = Chemical_1_1;
+            },
+            function (Planet_1_1) {
+                Planet_1 = Planet_1_1;
+            },
+            function (MappedSprite_1_1) {
+                MappedSprite_1 = MappedSprite_1_1;
+            },
+            function (misc_2_1) {
+                misc_2 = misc_2_1;
+            }
+        ],
+        execute: function () {
+        }
+    };
+});
+System.register("main", ["Game", "generator", "debug"], function (exports_10, context_10) {
+    var __moduleName = context_10 && context_10.id;
+    function renderSpectres(planet) {
+        planet.ensureVisionMap();
+        const flowerChromes = document.getElementsByClassName("flower-chrome");
+        for (let i = 0; i < planet.flowers.length; i++) {
+            const s = planet.flowers[i];
+            const c = flowerChromes[i];
+            c.width = c.clientWidth;
+            c.height = c.clientHeight;
+            const cctx = c.getContext("2d");
+            s.drawOnCtx(cctx, planet.vision);
+        }
+        for (let i = 1; i <= 5; i++) {
+            const chemical = planet.chemicals[i - 1];
+            const ci1 = document.getElementById(`chemical-info-${i}`);
+            const ci1c = ci1.getElementsByClassName("chemical-spectre")[0];
+            ci1c.width = ci1c.clientWidth;
+            ci1c.height = ci1c.clientHeight;
+            const ci1cctx = ci1c.getContext("2d");
+            chemical.drawOnCtx(ci1cctx, planet.vision);
+            const ci1p = ci1.getElementsByClassName("chemical-value")[0];
+            ci1p.innerText = chemical.price.toString();
+        }
+        for (let i = 1; i <= 10; i++) {
+            const coneCell1 = planet.coneCells[i - 1];
+            const ci1 = document.getElementById(`coneCell-info-${i}`);
+            const ci1c = ci1.getElementsByClassName("chemical-spectre")[0];
+            ci1c.width = ci1c.clientWidth;
+            ci1c.height = ci1c.clientHeight;
+            const ci1cctx = ci1c.getContext("2d");
+            coneCell1.drawOnCtx(ci1cctx, `rgba(${coneCell1 === planet.vision.r ? 255 : 0},`
+                + `${coneCell1 === planet.vision.g ? 255 : 0},`
+                + `${coneCell1 === planet.vision.b ? 255 : 0}, 1)`);
+        }
+    }
+    var Game_1, generator_1, debug, gameScreen, planet, rerollBtn, startBtn;
+    return {
+        setters: [
+            function (Game_1_1) {
+                Game_1 = Game_1_1;
+            },
+            function (generator_1_1) {
+                generator_1 = generator_1_1;
+            },
+            function (debug_2) {
+                debug = debug_2;
+            }
+        ],
+        execute: function () {
+            if (!debug.showFlowersOnPage) {
+                const flowersContainer = document.getElementById("flowers");
+                flowersContainer.style.display = "none";
+            }
+            gameScreen = document.getElementById("gameScreen");
+            gameScreen.style.display = "none";
+            for (const e of Array.from(document.getElementsByClassName("color-choice-radio"))) {
+                e.addEventListener("click", ev => {
+                    const el = ev.srcElement;
+                    const coneCell = el.value === "0"
+                        ? undefined
+                        : planet.coneCells[(+el.value) - 1];
+                    switch (el.name) {
+                        case "red-choice": {
+                            planet.vision.r = coneCell;
+                            break;
+                        }
+                        case "green-choice": {
+                            planet.vision.g = coneCell;
+                            break;
+                        }
+                        case "blue-choice": {
+                            planet.vision.b = coneCell;
+                            break;
+                        }
+                    }
+                    renderSpectres(planet);
+                });
+            }
+            planet = generator_1.generateRandomPlanet();
+            renderSpectres(planet);
+            rerollBtn = document.getElementById("reroll");
+            rerollBtn.addEventListener("click", ev => {
+                planet = generator_1.generateRandomPlanet();
+                renderSpectres(planet);
+                for (const e of Array.from(document.getElementsByClassName("color-choice-radio-reset"))) {
+                    const r = e;
+                    r.checked = true;
+                }
+            });
             startBtn = document.getElementById("startGame");
             startBtn.addEventListener("click", ev => {
                 const canvasTerrain = document.getElementById("terrain");
@@ -478,7 +516,7 @@ System.register("main", ["utils/misc", "Chemical", "generateRandomSpectre", "Pla
                 ctxTerrain.imageSmoothingEnabled = false;
                 ctxTerrain.fillStyle = "#F0A0D0";
                 ctxTerrain.fillRect(0, 0, canvasTerrain.width, canvasTerrain.height);
-                const game = new Game(planet);
+                const game = new Game_1.Game(planet);
             });
         }
     };

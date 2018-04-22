@@ -83,8 +83,8 @@ System.register("debug", [], function (exports_4, context_4) {
     return {
         setters: [],
         execute: function () {
-            exports_4("drawPriceOverFlowers", drawPriceOverFlowers = true);
-            exports_4("showFlowersOnPage", showFlowersOnPage = false);
+            exports_4("drawPriceOverFlowers", drawPriceOverFlowers = false);
+            exports_4("showFlowersOnPage", showFlowersOnPage = true);
         }
     };
 });
@@ -190,10 +190,11 @@ System.register("Planet", [], function (exports_6, context_6) {
         setters: [],
         execute: function () {
             Planet = class Planet {
-                constructor(chemicals, coneCells, flowers) {
+                constructor(chemicals, coneCells, flowers, grass) {
                     this.chemicals = chemicals;
                     this.coneCells = coneCells;
                     this.flowers = flowers;
+                    this.grass = grass;
                     this.vision = {
                         r: undefined,
                         g: undefined,
@@ -289,16 +290,30 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                     this.totalTime = 0;
                     this.timeLeft = 10;
                     this.gameOver = false;
-                    const dt = 0.1;
+                    this.flowerScale = .5;
+                    this.flowers = [];
+                    this.gameField = document.getElementById("gameField");
+                    const canvasTerrain = document.getElementById("terrain");
+                    const ctxTerrain = canvasTerrain.getContext("2d");
+                    canvasTerrain.width = canvasTerrain.clientWidth;
+                    canvasTerrain.height = canvasTerrain.clientHeight;
+                    ctxTerrain.imageSmoothingEnabled = false;
+                    for (let x = 0; x < canvasTerrain.width; x += planet.grass.lastCtx.canvas.width * this.flowerScale) {
+                        for (let y = 0; y < canvasTerrain.height; y += planet.grass.lastCtx.canvas.height * this.flowerScale) {
+                            ctxTerrain.drawImage(planet.grass.lastCtx.canvas, 0, 0, planet.grass.lastCtx.canvas.width, planet.grass.lastCtx.canvas.height, x, y, planet.grass.lastCtx.canvas.width * this.flowerScale, planet.grass.lastCtx.canvas.height * this.flowerScale);
+                        }
+                    }
+                    const dt = 0.05;
                     this.timerId = setInterval(() => {
                         this.timeLeft -= dt;
                         if (this.timeLeft < 0) {
+                            this.timeLeft = 0;
                             this.gameOver = true;
                             clearInterval(this.timerId);
                         }
                         else {
                             this.totalTime += dt;
-                            if (Math.random() < 0.75 * dt) {
+                            if (Math.random() < 1 * dt) {
                                 this.addFlower();
                             }
                         }
@@ -316,20 +331,23 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                     totalTimeLabel.innerText = this.totalTime.toFixed(1);
                     const timeLeftLabel = document.getElementById("timeLeft-label");
                     timeLeftLabel.innerText = this.timeLeft.toFixed(1);
+                    timeLeftLabel.style.color = this.timeLeft < 5 ? "red" : "white";
+                    if (this.timeLeft < 5) {
+                        timeLeftLabel.style.fontSize = (40 - (this.timeLeft * 10) % 5) + "px";
+                    }
                 }
                 addFlower() {
-                    const flowerScale = .5;
-                    const gameField = document.getElementById("gameField");
+                    const flower = misc_1.getRandomElement(this.planet.flowers);
+                    const left = 2 + Math.random() * (this.gameField.clientWidth - flower.source.width * this.flowerScale - 4);
+                    const top = 2 + Math.random() * (this.gameField.clientHeight - flower.source.height * this.flowerScale - 4);
                     const canvas = document.createElement("canvas");
-                    gameField.appendChild(canvas);
+                    this.gameField.appendChild(canvas);
+                    this.flowers.push(canvas);
                     canvas.style.position = "absolute";
-                    const top = Math.random() * gameField.clientHeight;
-                    const left = Math.random() * gameField.clientWidth;
                     canvas.style.left = left + "px";
                     canvas.style.top = top + "px";
-                    const flower = misc_1.getRandomElement(this.planet.flowers);
-                    canvas.width = flower.source.width * flowerScale;
-                    canvas.height = flower.source.height * flowerScale;
+                    canvas.width = flower.source.width * this.flowerScale;
+                    canvas.height = flower.source.height * this.flowerScale;
                     canvas.style.zIndex = "10";
                     const ctx = canvas.getContext("2d");
                     ctx.drawImage(flower.lastCtx.canvas, 0, 0, canvas.width, canvas.height);
@@ -349,7 +367,7 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                             bonusLabel.style.left = ev.layerX + left + "px";
                             bonusLabel.style.top = ev.layerY + top + "px";
                             bonusLabel.style.zIndex = "5";
-                            gameField.appendChild(bonusLabel);
+                            this.gameField.appendChild(bonusLabel);
                             let c = 0;
                             const anim = setInterval(() => {
                                 c++;
@@ -358,12 +376,20 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                                 bonusLabel.style.opacity = (1 - c / 20).toString();
                                 if (c > 20) {
                                     clearInterval(anim);
-                                    gameField.removeChild(bonusLabel);
+                                    this.gameField.removeChild(bonusLabel);
                                 }
                             }, 50);
-                            gameField.removeChild(canvas);
+                            this.gameField.removeChild(canvas);
+                            this.flowers = this.flowers.filter(f => f !== canvas);
                         }
                     });
+                }
+                kill() {
+                    clearInterval(this.timerId);
+                    for (const f of this.flowers) {
+                        this.gameField.removeChild(f);
+                    }
+                    this.flowers = [];
                 }
             };
             exports_8("Game", Game);
@@ -373,7 +399,7 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
 System.register("generator", ["Spectre", "Chemical", "Planet", "MappedSprite", "utils/misc"], function (exports_9, context_9) {
     var __moduleName = context_9 && context_9.id;
     function generateRandomSpectre() {
-        const components = Array.from({ length: Math.round(Math.random() * 3 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 5, 1 / (.25 + Math.random())));
+        const components = Array.from({ length: Math.round(Math.random() * 3 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 7, 1 / (.25 + Math.random())));
         let max = -Infinity;
         for (let x = -1; x <= 1; x += .01) {
             const fx = components.reduce((acc, c) => acc + c.intensivity(x), 0);
@@ -391,7 +417,11 @@ System.register("generator", ["Spectre", "Chemical", "Planet", "MappedSprite", "
             r: misc_2.getRandomElement(chemicals),
             g: misc_2.getRandomElement(chemicals),
             b: misc_2.getRandomElement(chemicals),
-        })));
+        })), new MappedSprite_1.MappedSprite(document.getElementsByClassName("grass-image")[0], {
+            r: misc_2.getRandomElement(chemicals),
+            g: misc_2.getRandomElement(chemicals),
+            b: misc_2.getRandomElement(chemicals),
+        }));
     }
     exports_9("generateRandomPlanet", generateRandomPlanet);
     var Spectre_1, Chemical_1, Planet_1, MappedSprite_1, misc_2;
@@ -430,6 +460,11 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             const cctx = c.getContext("2d");
             s.drawOnCtx(cctx, planet.vision);
         }
+        const grassChrome = document.getElementsByClassName("grass-chrome")[0];
+        grassChrome.width = grassChrome.clientWidth;
+        grassChrome.height = grassChrome.clientHeight;
+        const grassChromeCtx = grassChrome.getContext("2d");
+        planet.grass.drawOnCtx(grassChromeCtx, planet.vision);
         for (let i = 1; i <= 5; i++) {
             const chemical = planet.chemicals[i - 1];
             const ci1 = document.getElementById(`chemical-info-${i}`);
@@ -453,7 +488,7 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
                 + `${coneCell1 === planet.vision.b ? 255 : 0}, 1)`);
         }
     }
-    var Game_1, generator_1, debug, gameScreen, planet, rerollBtn, startBtn;
+    var Game_1, generator_1, debug, startScreen, flowersContainer, gameScreen, planet, rerollBtn, game, startBtn;
     return {
         setters: [
             function (Game_1_1) {
@@ -467,11 +502,12 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             }
         ],
         execute: function () {
+            startScreen = document.getElementById("startScreen");
+            flowersContainer = document.getElementById("flowers");
+            gameScreen = document.getElementById("gameScreen");
             if (!debug.showFlowersOnPage) {
-                const flowersContainer = document.getElementById("flowers");
                 flowersContainer.style.display = "none";
             }
-            gameScreen = document.getElementById("gameScreen");
             gameScreen.style.display = "none";
             for (const e of Array.from(document.getElementsByClassName("color-choice-radio"))) {
                 e.addEventListener("click", ev => {
@@ -500,23 +536,31 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             renderSpectres(planet);
             rerollBtn = document.getElementById("reroll");
             rerollBtn.addEventListener("click", ev => {
-                planet = generator_1.generateRandomPlanet();
-                renderSpectres(planet);
+                for (const el of Array.from(document.getElementsByClassName("startScreen-tohide"))) {
+                    const tohide = el;
+                    tohide.style.display = "block";
+                }
+                gameScreen.style.display = "none";
+                startBtn.value = "Go!";
                 for (const e of Array.from(document.getElementsByClassName("color-choice-radio-reset"))) {
                     const r = e;
                     r.checked = true;
                 }
+                planet = generator_1.generateRandomPlanet();
+                renderSpectres(planet);
             });
             startBtn = document.getElementById("startGame");
             startBtn.addEventListener("click", ev => {
-                const canvasTerrain = document.getElementById("terrain");
-                const ctxTerrain = canvasTerrain.getContext("2d");
-                canvasTerrain.width = canvasTerrain.clientWidth;
-                canvasTerrain.height = canvasTerrain.clientHeight;
-                ctxTerrain.imageSmoothingEnabled = false;
-                ctxTerrain.fillStyle = "#F0A0D0";
-                ctxTerrain.fillRect(0, 0, canvasTerrain.width, canvasTerrain.height);
-                const game = new Game_1.Game(planet);
+                for (const el of Array.from(document.getElementsByClassName("startScreen-tohide"))) {
+                    const tohide = el;
+                    tohide.style.display = "none";
+                }
+                gameScreen.style.display = "block";
+                startBtn.value = "Restart";
+                if (game) {
+                    game.kill();
+                }
+                game = new Game_1.Game(planet);
             });
         }
     };

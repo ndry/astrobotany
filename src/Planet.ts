@@ -18,6 +18,7 @@ export class Planet {
         public chemicals: Chemical[],
         public coneCells: Spectre[],
         public flowers: MappedSprite[],
+        public grass: MappedSprite,
     ) {
 
     }

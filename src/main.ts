@@ -7,12 +7,14 @@ import { Game } from "./Game";
 import { generateRandomPlanet } from "./generator";
 import * as debug from "./debug";
 
+const startScreen =  document.getElementById("startScreen")!;
+const flowersContainer = document.getElementById("flowers")!;
+const gameScreen = document.getElementById("gameScreen")!;
+
 if (!debug.showFlowersOnPage) {
-    const flowersContainer = document.getElementById("flowers")!;
     flowersContainer.style.display = "none";
 }
 
-const gameScreen = document.getElementById("gameScreen")!;
 gameScreen.style.display = "none";
 
 function renderSpectres(planet: Planet) {
@@ -30,6 +32,13 @@ function renderSpectres(planet: Planet) {
 
         s.drawOnCtx(cctx, planet.vision);
     }
+
+    const grassChrome = document.getElementsByClassName("grass-chrome")[0] as HTMLCanvasElement; 
+    grassChrome.width = grassChrome.clientWidth;
+    grassChrome.height = grassChrome.clientHeight;
+    const grassChromeCtx = grassChrome.getContext("2d")!;
+
+    planet.grass.drawOnCtx(grassChromeCtx, planet.vision);
 
     for (let i = 1; i <= 5; i++) {
         const chemical = planet.chemicals[i - 1];
@@ -88,31 +97,38 @@ renderSpectres(planet);
 
 const rerollBtn = document.getElementById("reroll") as HTMLButtonElement;
 rerollBtn.addEventListener("click", ev => {
-    planet = generateRandomPlanet();
-    renderSpectres(planet);
+
+
+    for (const el of Array.from(document.getElementsByClassName("startScreen-tohide"))) {
+        const tohide = el as HTMLElement;
+        tohide.style.display = "block";
+    }
+    gameScreen.style.display = "none";
+    startBtn.value = "Go!";
 
     for (const e of Array.from(document.getElementsByClassName("color-choice-radio-reset"))) {
         const r = e as HTMLInputElement;
         r.checked = true;
     }
+
+    planet = generateRandomPlanet();
+    renderSpectres(planet);
 });
 
 
-
+let game: Game | undefined;
 const startBtn = document.getElementById("startGame") as HTMLButtonElement;
 startBtn.addEventListener("click", ev => {
-    const canvasTerrain = document.getElementById("terrain") as HTMLCanvasElement;
-    const ctxTerrain = canvasTerrain.getContext("2d")!;
-    
-    canvasTerrain.width = canvasTerrain.clientWidth;
-    canvasTerrain.height = canvasTerrain.clientHeight;
-    
-    ctxTerrain.imageSmoothingEnabled = false;
-
-    ctxTerrain.fillStyle = "#F0A0D0";
-    ctxTerrain.fillRect(0, 0, canvasTerrain.width, canvasTerrain.height);
-
-    const game = new Game(planet);
+    for (const el of Array.from(document.getElementsByClassName("startScreen-tohide"))) {
+        const tohide = el as HTMLElement;
+        tohide.style.display = "none";
+    }
+    gameScreen.style.display = "block";
+    startBtn.value = "Restart";
+    if (game) {
+        game.kill();
+    }
+    game = new Game(planet);
 });
 
 

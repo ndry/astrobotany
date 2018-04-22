@@ -1,0 +1,202 @@
+
+html, body {
+    background-color: black;
+    width   : 100%;
+     margin  : 0;
+    padding : 0;
+    text-align: center;
+}
+
+
+#startScreen {
+    z-index: 5;
+    color: white;
+    background-color: black;
+    width: 1000px;
+    text-align: center;
+    margin: auto;
+}
+
+#startScreen .chemical-info {
+    position: relative;
+    margin: 5px;
+    display: inline-block;
+}
+
+#startScreen .chemical-spectre {
+    width: 140px;
+    height: 65px;
+    border: 1px white solid;
+    background-color: #404040;
+    display: inline-block;
+}
+#startScreen .chemical-scale > * {
+    display: inline-block;
+}
+
+#startScreen .chemical-scale-worst {
+    font-size: 80px;
+    width: 80px;
+}
+
+#startScreen .chemical-scale-best {
+    font-size: 100px;
+    width: 100px;
+}
+
+#startScreen .chemical-value {
+    border: 1px white solid;
+    color: white;
+    font-size: 25px;
+    font-family: arial;
+}
+
+#startScreen .chemical-scale-worst {
+    color: white;
+}
+
+
+.color-choice {
+    display: inline-block;
+}
+
+.color-choice-label-reset {
+    display: inline;
+}
+
+.color-choice input {
+    display: block;
+}
+
+.color-choice-label:not(.color-choice-label-reset) {
+    display: block;
+}
+
+
+#foo:checked::before,
+input[type="radio"].color-choice-radio {
+    position:absolute;
+    clip: rect(0,0,0,0);
+    clip: rect(0 0 0 0);
+    margin: 0px;
+}
+
+input[type="radio"].color-choice-radio + label::before {
+    margin: 0px;
+}
+
+.color-choice-label {
+    height: 22px;
+    width: 22px;
+}
+
+#foo:checked,
+input[type="radio"].color-choice-radio-red + label::before {
+    content: url('assets/LD_button_RED_OFF.png');
+}
+
+input[type="radio"].color-choice-radio-red:checked + label::before {
+    content: url('assets/LD_button_RED_ON.png');
+}
+
+#foo:checked,
+input[type="radio"].color-choice-radio-green + label::before {
+    content: url('assets/LD_button_GREEN_OFF.png');
+}
+
+input[type="radio"].color-choice-radio-green:checked + label::before {
+    content: url('assets/LD_button_GREEN_ON.png');
+}
+
+#foo:checked,
+input[type="radio"].color-choice-radio-blue + label::before {
+    content: url('assets/LD_button_BLUE_OFF.png');
+}
+
+input[type="radio"].color-choice-radio-blue:checked + label::before {
+    content: url('assets/LD_button_BLUE_ON.png');
+}
+
+#reroll, #startGame {
+    width: 200px;
+    height: 50px;
+    font-family: arial;
+    font-size: 30px;
+    border: 1px white solid;
+    margin: 40px 15px;
+}
+
+#reroll {
+    background: gray;
+}
+
+#startGame {
+    background: rgb(212, 212, 212);
+}
+
+
+
+#gameScreen {
+    position: relative;
+    color: white;
+
+    width: 1000px;
+    text-align: center;
+    margin: auto;
+}
+
+#gameOver-label {
+    text-align: center;
+    color: red;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, .5);
+    z-index: 25;
+    line-height: 500px;
+    font-size: 150px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#gameScreen {
+    display: none;
+}
+
+#gameField {
+    position: relative;
+    width: 1000px;
+    height: 500px;
+    border: 1px white solid;
+}
+
+#terrain {
+    width: 100%;
+    height: 100%; 
+}
+
+#totalTime-label, #timeLeft-label {
+    font-family: arial;
+    font-size: 40px;
+    margin: 0px 50px;
+}
+
+
+    
+
+.flower-image {
+}
+
+.bonus-label {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+
+.positive-bonus-label {
+    color: lime;
+}
+
+.negative-bonus-label {
+    color: red;
+}

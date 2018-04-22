@@ -4,7 +4,7 @@
 
 <meta charset="utf-8" />
 <title>astrobotany</title>
-<link rel="icon" href="./favicon.ico">
+<link rel="icon" href="./assets/LD_favicon_package_v0.16/favicon.ico">
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.20.19/system.js"></script>
@@ -17,59 +17,11 @@
             .then(null, console.error.bind(console));
     });
 </script>
-<style>
-
-    #gameScreen {
-        position: relative;
-        color: white;
-    }
-
-    #gameOver-label {
-        text-align: center;
-        color: red;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, .5);
-        z-index: 5;
-        line-height: 800px;
-        font-size: 30px;
-    }
-
-    #gameField {
-        position: relative;
-    }
-
-    #terrain {
-        width: 800px;
-        height: 800px;
-    }
-
-    .flower-image {
-    }
-
-    .bonus-label {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 20px;
-    }
-
-    .positive-bonus-label {
-        color: lime;
-    }
-
-    .negative-bonus-label {
-        color: red;
-    }
-
-</style>
-
 </head>
 <body>
     <div id="startScreen">
-            <h2>Chemicals on this planet</h2>
-            <h3>spectrogram & value</h3>
+            <h2 class="startScreen-tohide">Chemicals on this planet</h2>
+            <h3 class="startScreen-tohide">spectrogram & value</h3>
             <div class="chemical-scale">
                 <div class="chemical-scale-worst">☠</div>
                 <div>
@@ -107,7 +59,15 @@
                 <div class="chemical-scale-best">☺</div>
                     
             </div> 
-            <h2>Available cone cells
+            <div id="gameScreen">
+                <label id="totalTime-label">15</label>
+                <label id="timeLeft-label">10</label>
+                <div id="gameField">
+                    <canvas id="terrain"></canvas>
+                    <label id="gameOver-label">Game Over!</label>
+                </div>
+            </div>
+            <h2 class="startScreen-tohide">Available cone cells
                     <div class="color-choice color-choice-reset">
                             <input type="radio" class="color-choice-radio color-choice-radio-reset color-choice-radio-red" id="red-choice-0" name="red-choice" value="0" checked>
                             <label class="color-choice-label color-choice-label-reset color-choice-label-red" for="red-choice-0"></label>
@@ -117,7 +77,7 @@
                             <label class="color-choice-label color-choice-label-reset" for="blue-choice-0"></label>
                         </div>
             </h2>
-            <div>
+            <div class="startScreen-tohide">
                 <div id="coneCell-info-1" class="chemical-info">
                     <canvas class="chemical-spectre"></canvas>
                     <div class="color-choice">
@@ -232,14 +192,6 @@
             <input type="button" id="reroll" value="Reroll">
             <input type="button" id="startGame" value="Go!">
     </div>
-    <div id="gameScreen">
-        <label id="totalTime-label">15</label>
-        <label id="timeLeft-label">10</label>
-        <div id="gameField">
-            <canvas id="terrain"></canvas>
-            <label id="gameOver-label">Game Over!</label>
-        </div>
-    </div>
     <div id="flowers">
         <div>
                 <canvas class="flower-chrome"></canvas>
@@ -257,6 +209,7 @@
                 <canvas class="flower-chrome"></canvas>
                 <canvas class="flower-chrome"></canvas>
                 <canvas class="flower-chrome"></canvas>
+                <canvas class="grass-chrome"></canvas>
             </div>
             <div>
                 <img class="flower-image" src="./assets/LD_flower01.png">
@@ -274,6 +227,7 @@
                 <img class="flower-image" src="./assets/LD_flower13.png">
                 <img class="flower-image" src="./assets/LD_flower14.png">
                 <img class="flower-image" src="./assets/LD_flower15.png">
+                <img class="grass-image" src="./assets/LD_GrassTxtr_01_256x256_Grey.png">
             </div>
     </div>
 </body>

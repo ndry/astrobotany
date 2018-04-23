@@ -26,7 +26,11 @@ The theme was *Combine 2 Incompatible Genres* and our genres are *Hidden object*
 # Credits
 
 Code: ndry
+
+
 Art: Gaya Trzn
+
+
 Thanks to *Kyiv Indies Game Jam* team for great organisation
 
 # Build & run

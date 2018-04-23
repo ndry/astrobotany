@@ -39,3 +39,7 @@ npm start
 
 
 # [Play Astrobotany!](https://ndry.github.io/astrobotany/public/)
+
+![Start screen](https://ndry.github.io/astrobotany/public/screenshots/start-none.png "Start screen")
+![Start screen, all sysytems go](https://ndry.github.io/astrobotany/public/screenshots/start-all-go.png "Start screen, all sysytems go")
+![Game screen](https://ndry.github.io/astrobotany/public/screenshots/gameplay.png "Game screen")

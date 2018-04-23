@@ -2,12 +2,17 @@ import { Planet } from "./Planet";
 import { getRandomElement } from "./utils/misc";
 
 export class Game {
+    public flowerScale = .5;
+    public initialTimeLeft = 20;
+    public initialFlowerCount = 15;
+    public flowerSpawnPerSecond = 1.5;
+
+
     public totalTime = 0;
-    public timeLeft = 20;
+    public timeLeft = this.initialTimeLeft;
     public gameOver = false;
     public timerId: number;
 
-    public flowerScale = .3;
 
     public flowers: HTMLCanvasElement[] = [];
 
@@ -47,13 +52,13 @@ export class Game {
                 clearInterval(this.timerId);
             } else {
                 this.totalTime += dt;
-                if (Math.random() < 1 * dt) {
+                if (Math.random() < this.flowerSpawnPerSecond * dt) {
                     this.addFlower();
                 }
             }
             this.renderStats();
         }, dt * 1000);
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < this.initialFlowerCount; i++) {
             this.addFlower();
         }
         this.renderStats();

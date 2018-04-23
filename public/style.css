@@ -200,6 +200,7 @@ input[type="radio"].color-choice-radio-blue:checked + label::before {
 
 #flowers {
     display: none;
+    margin-top: 1000px;
 }
 
 .bonus-label {

@@ -102,6 +102,7 @@ System.register("MappedSprite", ["debug"], function (exports_5, context_5) {
                 constructor(source, chemicalMap) {
                     this.source = source;
                     this.chemicalMap = chemicalMap;
+                    this.flowerPriceFactor = 1 / 350;
                     this.price = 0;
                 }
                 drawOnCtx(ctx, vision) {
@@ -123,44 +124,26 @@ System.register("MappedSprite", ["debug"], function (exports_5, context_5) {
                                 + (this.chemicalMap.g ? this.chemicalMap.g.price * g : 0)
                                 + (this.chemicalMap.b ? this.chemicalMap.b.price * b : 0)) * a;
                             norm += 255 - a;
-                            imageData.data[index + 0] = Math.min(vision.r
-                                ? (this.chemicalMap.r
-                                    ? Math.round(vision.map.get(vision.r).get(this.chemicalMap.r) * r / 255)
-                                    : 0) / 3
-                                    + (this.chemicalMap.g
-                                        ? Math.round(vision.map.get(vision.r).get(this.chemicalMap.g) * r / 255)
-                                        : 0) / 3
-                                    + (this.chemicalMap.b
-                                        ? Math.round(vision.map.get(vision.r).get(this.chemicalMap.b) * r / 255)
-                                        : 0) / 3
-                                : 0, 1) * 255;
-                            imageData.data[index + 1] = Math.min(vision.g
-                                ? (this.chemicalMap.r
-                                    ? Math.round(vision.map.get(vision.g).get(this.chemicalMap.r) * g / 255)
-                                    : 0) / 3
-                                    + (this.chemicalMap.g
-                                        ? Math.round(vision.map.get(vision.g).get(this.chemicalMap.g) * g / 255)
-                                        : 0) / 3
-                                    + (this.chemicalMap.b
-                                        ? Math.round(vision.map.get(vision.g).get(this.chemicalMap.b) * g / 255)
-                                        : 0) / 3
-                                : 0, 1) * 255;
-                            imageData.data[index + 2] = Math.min(vision.b
-                                ? (this.chemicalMap.r
-                                    ? Math.round(vision.map.get(vision.b).get(this.chemicalMap.r) * b / 255)
-                                    : 0) / 3
-                                    + (this.chemicalMap.g
-                                        ? Math.round(vision.map.get(vision.b).get(this.chemicalMap.g) * b / 255)
-                                        : 0) / 3
-                                    + (this.chemicalMap.b
-                                        ? Math.round(vision.map.get(vision.b).get(this.chemicalMap.b) * b / 255)
-                                        : 0) / 3
-                                : 0, 1) * 255;
+                            imageData.data[index + 0] = Math.round(Math.min(vision.r
+                                ? (vision.map.get(vision.r).get(this.chemicalMap.r) * r / 255) / 3
+                                    + (vision.map.get(vision.r).get(this.chemicalMap.g) * g / 255) / 3
+                                    + (vision.map.get(vision.r).get(this.chemicalMap.b) * b / 255) / 3
+                                : 0, 1) * 255);
+                            imageData.data[index + 1] = Math.round(Math.min(vision.g
+                                ? (vision.map.get(vision.g).get(this.chemicalMap.r) * r / 255) / 3
+                                    + (vision.map.get(vision.g).get(this.chemicalMap.g) * g / 255) / 3
+                                    + (vision.map.get(vision.g).get(this.chemicalMap.b) * b / 255) / 3
+                                : 0, 1) * 255);
+                            imageData.data[index + 2] = Math.round(Math.min(vision.b
+                                ? (vision.map.get(vision.b).get(this.chemicalMap.r) * r / 255) / 3
+                                    + (vision.map.get(vision.b).get(this.chemicalMap.g) * g / 255) / 3
+                                    + (vision.map.get(vision.b).get(this.chemicalMap.b) * b / 255) / 3
+                                : 0, 1) * 255);
                             imageData.data[index + 3] = a;
                         }
                     }
                     ctx.putImageData(imageData, 0, 0, 0, 0, imageData.width, imageData.height);
-                    this.price = Math.floor(fullPrice / norm / 500 * 10) / 10;
+                    this.price = Math.floor(fullPrice / norm * this.flowerPriceFactor * 10) / 10;
                     if (debug.drawPriceOverFlowers) {
                         ctx.font = "40px arial";
                         ctx.fillStyle = "rgba(0, 0, 0, .8)";
@@ -287,10 +270,13 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
             Game = class Game {
                 constructor(planet) {
                     this.planet = planet;
+                    this.flowerScale = .5;
+                    this.initialTimeLeft = 20;
+                    this.initialFlowerCount = 15;
+                    this.flowerSpawnPerSecond = 1.5;
                     this.totalTime = 0;
-                    this.timeLeft = 20;
+                    this.timeLeft = this.initialTimeLeft;
                     this.gameOver = false;
-                    this.flowerScale = .3;
                     this.flowers = [];
                     this.gameField = document.getElementById("gameField");
                     const canvasTerrain = document.getElementById("terrain");
@@ -313,13 +299,13 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                         }
                         else {
                             this.totalTime += dt;
-                            if (Math.random() < 1 * dt) {
+                            if (Math.random() < this.flowerSpawnPerSecond * dt) {
                                 this.addFlower();
                             }
                         }
                         this.renderStats();
                     }, dt * 1000);
-                    for (let i = 0; i < 15; i++) {
+                    for (let i = 0; i < this.initialFlowerCount; i++) {
                         this.addFlower();
                     }
                     this.renderStats();
@@ -410,8 +396,8 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
 });
 System.register("generator", ["Spectre", "Chemical", "Planet", "MappedSprite", "utils/misc"], function (exports_9, context_9) {
     var __moduleName = context_9 && context_9.id;
-    function generateRandomSpectre() {
-        const components = Array.from({ length: Math.round(Math.random() * 3 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 7, 1 / (.25 + Math.random())));
+    function generateRandomConeCellSpectre() {
+        const components = Array.from({ length: Math.round(Math.random() * 2 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 7, 1 / (.25 + Math.random())));
         let max = -Infinity;
         for (let x = -1; x <= 1; x += .01) {
             const fx = components.reduce((acc, c) => acc + c.intensivity(x), 0);
@@ -421,10 +407,22 @@ System.register("generator", ["Spectre", "Chemical", "Planet", "MappedSprite", "
         }
         return new Spectre_1.Spectre(components, 1 / max);
     }
-    exports_9("generateRandomSpectre", generateRandomSpectre);
+    exports_9("generateRandomConeCellSpectre", generateRandomConeCellSpectre);
+    function generateRandomChemicalSpectre() {
+        const components = Array.from({ length: Math.round(Math.random() * 3 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 4, 1 / (.25 + Math.random())));
+        let max = -Infinity;
+        for (let x = -1; x <= 1; x += .01) {
+            const fx = components.reduce((acc, c) => acc + c.intensivity(x), 0);
+            if (fx > max) {
+                max = fx;
+            }
+        }
+        return new Spectre_1.Spectre(components, 1 / max);
+    }
+    exports_9("generateRandomChemicalSpectre", generateRandomChemicalSpectre);
     function generateRandomPlanet() {
-        const chemicals = Array.from({ length: 5 }, (v, k) => new Chemical_1.Chemical(generateRandomSpectre(), Math.sign(k - 2) * Math.pow(k - 2, 2)));
-        return new Planet_1.Planet(chemicals, Array.from({ length: 10 }, () => generateRandomSpectre()), Array.from(document.getElementsByClassName("flower-image"))
+        const chemicals = Array.from({ length: 5 }, (v, k) => new Chemical_1.Chemical(generateRandomChemicalSpectre(), Math.sign(k - 2) * Math.pow(k - 2, 2)));
+        return new Planet_1.Planet(chemicals, Array.from({ length: 10 }, () => generateRandomConeCellSpectre()), Array.from(document.getElementsByClassName("flower-image"))
             .map(e => new MappedSprite_1.MappedSprite(e, {
             r: misc_2.getRandomElement(chemicals),
             g: misc_2.getRandomElement(chemicals),

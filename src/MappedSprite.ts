@@ -4,6 +4,8 @@ import { Vision } from "./Vision";
 import * as debug from "./debug";
 
 export class MappedSprite {
+    public flowerPriceFactor = 1 / 350;
+
     constructor(
         public source: HTMLImageElement,
         public chemicalMap: {
@@ -65,7 +67,7 @@ export class MappedSprite {
 
         ctx.putImageData(imageData, 0, 0, 0, 0, imageData.width, imageData.height);
 
-        this.price = Math.floor(fullPrice / norm / 500 * 10) / 10;
+        this.price = Math.floor(fullPrice / norm * this.flowerPriceFactor * 10) / 10;
             
         if (debug.drawPriceOverFlowers) {
             ctx.font = "40px arial";

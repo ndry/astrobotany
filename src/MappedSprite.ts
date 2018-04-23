@@ -44,39 +44,39 @@ export class MappedSprite {
                     + (this.chemicalMap.b ? this.chemicalMap.b.price * b : 0)) * a;
                 norm += 255-a;
 
-                imageData.data[index + 0] = Math.min(vision.r
+                imageData.data[index + 0] = Math.round(Math.min(vision.r
                     ? (this.chemicalMap.r
-                            ? Math.round(vision.map.get(vision.r)!.get(this.chemicalMap.r)! * r / 255)
+                            ? vision.map.get(vision.r)!.get(this.chemicalMap.r)! * r / 255
                             : 0) / 3
                         + (this.chemicalMap.g
-                            ? Math.round(vision.map.get(vision.r)!.get(this.chemicalMap.g)! * r / 255)
+                            ? vision.map.get(vision.r)!.get(this.chemicalMap.g)! * r / 255
                             : 0) / 3
                         + (this.chemicalMap.b
-                            ? Math.round(vision.map.get(vision.r)!.get(this.chemicalMap.b)! * r / 255)
+                            ? vision.map.get(vision.r)!.get(this.chemicalMap.b)! * r / 255
                             : 0) / 3
-                    : 0, 1) * 255;
-                imageData.data[index + 1] = Math.min(vision.g
+                    : 0, 1) * 255);
+                imageData.data[index + 1] = Math.round(Math.min(vision.g
                     ? (this.chemicalMap.r
-                            ? Math.round(vision.map.get(vision.g)!.get(this.chemicalMap.r)! * g / 255)
+                            ? vision.map.get(vision.g)!.get(this.chemicalMap.r)! * g / 255
                             : 0) / 3
                         + (this.chemicalMap.g
-                            ? Math.round(vision.map.get(vision.g)!.get(this.chemicalMap.g)! * g / 255)
+                            ? vision.map.get(vision.g)!.get(this.chemicalMap.g)! * g / 255
                             : 0) / 3
                         + (this.chemicalMap.b
-                            ? Math.round(vision.map.get(vision.g)!.get(this.chemicalMap.b)! * g / 255)
+                            ? vision.map.get(vision.g)!.get(this.chemicalMap.b)! * g / 255
                             : 0) / 3
-                    : 0, 1) * 255;
-                imageData.data[index + 2] = Math.min(vision.b
+                    : 0, 1) * 255);
+                imageData.data[index + 2] = Math.round(Math.min(vision.b
                     ? (this.chemicalMap.r
-                            ? Math.round(vision.map.get(vision.b)!.get(this.chemicalMap.r)! * b / 255)
+                            ? vision.map.get(vision.b)!.get(this.chemicalMap.r)! * b / 255
                             : 0) / 3
                         + (this.chemicalMap.g
-                            ? Math.round(vision.map.get(vision.b)!.get(this.chemicalMap.g)! * b / 255)
+                            ? vision.map.get(vision.b)!.get(this.chemicalMap.g)! * b / 255
                             : 0) / 3
                         + (this.chemicalMap.b
-                            ? Math.round(vision.map.get(vision.b)!.get(this.chemicalMap.b)! * b / 255)
+                            ? vision.map.get(vision.b)!.get(this.chemicalMap.b)! * b / 255
                             : 0) / 3
-                    : 0, 1) * 255;
+                    : 0, 1) * 255);
                 imageData.data[index + 3] = a;
             }
         }

@@ -545,7 +545,7 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             gameScreen.style.display = "none";
             for (const e of Array.from(document.getElementsByClassName("color-choice-radio"))) {
                 e.addEventListener("click", ev => {
-                    const el = ev.srcElement;
+                    const el = ev.target;
                     const coneCell = el.value === "0"
                         ? undefined
                         : planet.coneCells[(+el.value) - 1];

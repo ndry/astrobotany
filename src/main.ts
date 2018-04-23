@@ -84,7 +84,7 @@ function renderSpectres(planet: Planet) {
 
 for (const e of Array.from(document.getElementsByClassName("color-choice-radio"))) {
     e.addEventListener("click", ev => {
-        const el = ev.srcElement as HTMLInputElement;
+        const el = ev.target as HTMLInputElement;
         const coneCell = el.value === "0"
             ? undefined
             : planet.coneCells[(+el.value) - 1];

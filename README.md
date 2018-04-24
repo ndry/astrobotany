@@ -2,7 +2,7 @@
 
 # Intro EN
 
-We are the team of astrobotanics inving you to participate in the space goat adventures!
+We are the team of astrobotanics inviting you to participate in the space goat adventures!
 
 Imagine yourself a goat on an alien planet... Alien starlight, you know, alien chemicals and so alien evolution paths. You have to eat flowers to stay alive and your vital skill would be to discriminate what's nutritious and what's poisonous by single glance! But, hey! You are good at physics and bioengeneering too (this what it takes be an astrobotanic this days, yeah, such a full stack scientist). 
 

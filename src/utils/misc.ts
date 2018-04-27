@@ -21,6 +21,15 @@ export function getRandomElement<T>(array: T[]): T {
     return array[Math.floor(Math.random() * array.length)];
 }
 
+export function shuffle<T>(array: T[]) {
+    let a = [...array];
+    for (let i = a.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
 export function setPixel(imageData: ImageData, x: number, y: number, r: number, g: number, b: number, a: number = 255) {
     const offset = (x * imageData.width + y) * 4;
     imageData.data[offset + 0] = r;

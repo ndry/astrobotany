@@ -79,12 +79,13 @@ System.register("Chemical", [], function (exports_3, context_3) {
 });
 System.register("debug", [], function (exports_4, context_4) {
     var __moduleName = context_4 && context_4.id;
-    var drawPriceOverFlowers, showFlowersOnPage;
+    var drawPriceOverFlowers, showFlowersOnPage, version;
     return {
         setters: [],
         execute: function () {
             exports_4("drawPriceOverFlowers", drawPriceOverFlowers = false);
             exports_4("showFlowersOnPage", showFlowersOnPage = false);
+            exports_4("version", version = "v3");
         }
     };
 });
@@ -102,7 +103,7 @@ System.register("MappedSprite", ["debug"], function (exports_5, context_5) {
                 constructor(source, chemicalMap) {
                     this.source = source;
                     this.chemicalMap = chemicalMap;
-                    this.flowerPriceFactor = 1 / 350;
+                    this.flowerPriceFactor = 1 / 300;
                     this.price = 0;
                 }
                 drawOnCtx(ctx, vision) {
@@ -243,6 +244,15 @@ System.register("utils/misc", [], function (exports_7, context_7) {
         return array[Math.floor(Math.random() * array.length)];
     }
     exports_7("getRandomElement", getRandomElement);
+    function shuffle(array) {
+        let a = [...array];
+        for (let i = a.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+    exports_7("shuffle", shuffle);
     function setPixel(imageData, x, y, r, g, b, a = 255) {
         const offset = (x * imageData.width + y) * 4;
         imageData.data[offset + 0] = r;
@@ -270,23 +280,23 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
             Game = class Game {
                 constructor(planet) {
                     this.planet = planet;
-                    this.flowerScale = .5;
-                    this.initialTimeLeft = 20;
-                    this.initialFlowerCount = 15;
-                    this.flowerSpawnPerSecond = 1.5;
                     this.totalTime = 0;
-                    this.timeLeft = this.initialTimeLeft;
+                    this.timeLeft = Game.initialTimeLeft;
                     this.gameOver = false;
                     this.flowers = [];
                     this.gameField = document.getElementById("gameField");
+                    this.gameOverLabel = document.getElementById("gameOver-label");
+                    this.maxTotalTimeLabel = document.getElementById("maxTotalTime-label");
+                    this.totalTimeLabel = document.getElementById("totalTime-label");
+                    this.timeLeftLabel = document.getElementById("timeLeft-label");
                     const canvasTerrain = document.getElementById("terrain");
                     const ctxTerrain = canvasTerrain.getContext("2d");
                     canvasTerrain.width = canvasTerrain.clientWidth;
                     canvasTerrain.height = canvasTerrain.clientHeight;
                     ctxTerrain.imageSmoothingEnabled = false;
-                    for (let x = 0; x < canvasTerrain.width; x += planet.grass.lastCtx.canvas.width * this.flowerScale) {
-                        for (let y = 0; y < canvasTerrain.height; y += planet.grass.lastCtx.canvas.height * this.flowerScale) {
-                            ctxTerrain.drawImage(planet.grass.lastCtx.canvas, 0, 0, planet.grass.lastCtx.canvas.width, planet.grass.lastCtx.canvas.height, x, y, planet.grass.lastCtx.canvas.width * this.flowerScale, planet.grass.lastCtx.canvas.height * this.flowerScale);
+                    for (let x = 0; x < canvasTerrain.width; x += planet.grass.lastCtx.canvas.width * Game.flowerScale) {
+                        for (let y = 0; y < canvasTerrain.height; y += planet.grass.lastCtx.canvas.height * Game.flowerScale) {
+                            ctxTerrain.drawImage(planet.grass.lastCtx.canvas, 0, 0, planet.grass.lastCtx.canvas.width, planet.grass.lastCtx.canvas.height, x, y, planet.grass.lastCtx.canvas.width * Game.flowerScale, planet.grass.lastCtx.canvas.height * Game.flowerScale);
                         }
                     }
                     const dt = 0.05;
@@ -299,27 +309,30 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                         }
                         else {
                             this.totalTime += dt;
-                            if (Math.random() < this.flowerSpawnPerSecond * dt) {
+                            if (this.totalTime > Game.maxTotalTime) {
+                                Game.maxTotalTime = this.totalTime;
+                                localStorage.setItem("maxTotalTime", Game.maxTotalTime.toString());
+                            }
+                            if (Math.random() < Game.flowerSpawnPerSecond * dt) {
                                 this.addFlower();
                             }
                         }
                         this.renderStats();
                     }, dt * 1000);
-                    for (let i = 0; i < this.initialFlowerCount; i++) {
+                    for (let i = 0; i < Game.initialFlowerCount; i++) {
                         this.addFlower();
                     }
                     this.renderStats();
                 }
                 renderStats() {
-                    const gameOverLabel = document.getElementById("gameOver-label");
-                    gameOverLabel.style.display = this.gameOver ? "block" : "none";
-                    const totalTimeLabel = document.getElementById("totalTime-label");
-                    totalTimeLabel.innerText = this.totalTime.toFixed(1);
-                    const timeLeftLabel = document.getElementById("timeLeft-label");
-                    timeLeftLabel.innerText = this.timeLeft.toFixed(1);
-                    timeLeftLabel.style.color = this.timeLeft < 5 ? "red" : "white";
+                    this.gameOverLabel.style.display = this.gameOver ? "block" : "none";
+                    this.maxTotalTimeLabel.innerText = Game.maxTotalTime.toFixed(1);
+                    this.totalTimeLabel.innerText = this.totalTime.toFixed(1);
+                    this.totalTimeLabel.style.color = (this.totalTime === Game.maxTotalTime) ? "lime" : "white";
+                    this.timeLeftLabel.innerText = this.timeLeft.toFixed(1);
+                    this.timeLeftLabel.style.color = this.timeLeft < 5 ? "red" : "white";
                     if (this.timeLeft < 5) {
-                        timeLeftLabel.style.fontSize = (40 - (this.timeLeft * 10) % 5) + "px";
+                        this.timeLeftLabel.style.fontSize = (40 - (this.timeLeft * 10) % 5) + "px";
                     }
                     const goatPlain = document.getElementById("goat-plain-ingame");
                     const goatSpace = document.getElementById("goat-space-ingame");
@@ -334,17 +347,16 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                 }
                 addFlower() {
                     const flower = misc_1.getRandomElement(this.planet.flowers);
-                    const left = 2 + Math.random() * (this.gameField.clientWidth - flower.source.width * this.flowerScale - 4);
-                    const top = 2 + Math.random() * (this.gameField.clientHeight - flower.source.height * this.flowerScale - 4);
+                    const left = 2 + Math.random() * (this.gameField.clientWidth - flower.source.width * Game.flowerScale - 4);
+                    const top = 2 + Math.random() * (this.gameField.clientHeight - flower.source.height * Game.flowerScale - 4);
                     const canvas = document.createElement("canvas");
                     this.gameField.appendChild(canvas);
                     this.flowers.push(canvas);
-                    canvas.style.position = "absolute";
+                    canvas.classList.add("flower-canvas");
                     canvas.style.left = left + "px";
                     canvas.style.top = top + "px";
-                    canvas.width = flower.source.width * this.flowerScale;
-                    canvas.height = flower.source.height * this.flowerScale;
-                    canvas.style.zIndex = "10";
+                    canvas.width = flower.source.width * Game.flowerScale;
+                    canvas.height = flower.source.height * Game.flowerScale;
                     const ctx = canvas.getContext("2d");
                     ctx.drawImage(flower.lastCtx.canvas, 0, 0, canvas.width, canvas.height);
                     canvas.addEventListener("click", ev => {
@@ -364,7 +376,6 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                             const bonusLabelY = ev.offsetY + top;
                             bonusLabel.style.left = bonusLabelX + "px";
                             bonusLabel.style.top = bonusLabelY + "px";
-                            bonusLabel.style.zIndex = "5";
                             this.gameField.appendChild(bonusLabel);
                             let c = 0;
                             const anim = setInterval(() => {
@@ -377,10 +388,16 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                                     this.gameField.removeChild(bonusLabel);
                                 }
                             }, 50);
-                            this.gameField.removeChild(canvas);
+                            canvas.remove();
                             this.flowers = this.flowers.filter(f => f !== canvas);
                         }
                     });
+                    setTimeout(() => {
+                        if (!this.gameOver) {
+                            canvas.remove();
+                            this.flowers = this.flowers.filter(f => f !== canvas);
+                        }
+                    }, 1000 / Game.flowerSpawnPerSecond * 30 * (1 + Math.random()));
                 }
                 kill() {
                     clearInterval(this.timerId);
@@ -390,6 +407,11 @@ System.register("Game", ["utils/misc"], function (exports_8, context_8) {
                     this.flowers = [];
                 }
             };
+            Game.flowerScale = .5;
+            Game.initialTimeLeft = 20;
+            Game.initialFlowerCount = 15;
+            Game.flowerSpawnPerSecond = 1.5;
+            Game.maxTotalTime = +(localStorage.getItem("maxTotalTime") || Game.initialTimeLeft);
             exports_8("Game", Game);
         }
     };
@@ -409,7 +431,7 @@ System.register("generator", ["Spectre", "Chemical", "Planet", "MappedSprite", "
     }
     exports_9("generateRandomConeCellSpectre", generateRandomConeCellSpectre);
     function generateRandomChemicalSpectre() {
-        const components = Array.from({ length: Math.round(Math.random() * 3 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 4, 1 / (.25 + Math.random())));
+        const components = Array.from({ length: Math.round(Math.random() * 2 + 1) }, () => new Spectre_1.SpectreComponent((Math.random() - .5) * 2, 0.5 + (1 - Math.random() * Math.random()) * 4, 1 / (.25 + Math.random())));
         let max = -Infinity;
         for (let x = -1; x <= 1; x += .01) {
             const fx = components.reduce((acc, c) => acc + c.intensivity(x), 0);
@@ -422,16 +444,30 @@ System.register("generator", ["Spectre", "Chemical", "Planet", "MappedSprite", "
     exports_9("generateRandomChemicalSpectre", generateRandomChemicalSpectre);
     function generateRandomPlanet() {
         const chemicals = Array.from({ length: 5 }, (v, k) => new Chemical_1.Chemical(generateRandomChemicalSpectre(), Math.sign(k - 2) * Math.pow(k - 2, 2)));
-        return new Planet_1.Planet(chemicals, Array.from({ length: 10 }, () => generateRandomConeCellSpectre()), Array.from(document.getElementsByClassName("flower-image"))
-            .map(e => new MappedSprite_1.MappedSprite(e, {
-            r: misc_2.getRandomElement(chemicals),
-            g: misc_2.getRandomElement(chemicals),
-            b: misc_2.getRandomElement(chemicals),
-        })), new MappedSprite_1.MappedSprite(document.getElementsByClassName("grass-image")[0], {
-            r: misc_2.getRandomElement(chemicals),
-            g: misc_2.getRandomElement(chemicals),
-            b: misc_2.getRandomElement(chemicals),
-        }));
+        const shuffledFlowerImages = misc_2.shuffle(Array.from(document.getElementsByClassName("flower-image")));
+        const flowers = [];
+        for (let i = 0; i < Math.floor(shuffledFlowerImages.length / 2); i++) {
+            const rgbIndices = {
+                r: Math.floor(Math.random() * chemicals.length),
+                g: Math.floor(Math.random() * chemicals.length),
+                b: Math.floor(Math.random() * chemicals.length),
+            };
+            flowers.push(new MappedSprite_1.MappedSprite(shuffledFlowerImages[i], {
+                r: chemicals[rgbIndices.r],
+                g: chemicals[rgbIndices.g],
+                b: chemicals[rgbIndices.b],
+            }));
+            flowers.push(new MappedSprite_1.MappedSprite(shuffledFlowerImages[shuffledFlowerImages.length - 1 - i], {
+                r: chemicals[chemicals.length - 1 - rgbIndices.r],
+                g: chemicals[chemicals.length - 1 - rgbIndices.g],
+                b: chemicals[chemicals.length - 1 - rgbIndices.b],
+            }));
+        }
+        return new Planet_1.Planet(chemicals, Array.from({ length: 10 }, () => generateRandomConeCellSpectre()), flowers, new MappedSprite_1.MappedSprite(document.getElementsByClassName("grass-image")[0], ((array) => ({
+            r: array[0],
+            g: array[1],
+            b: array[2],
+        }))(misc_2.shuffle(chemicals.slice(1, 4)))));
     }
     exports_9("generateRandomPlanet", generateRandomPlanet);
     var Spectre_1, Chemical_1, Planet_1, MappedSprite_1, misc_2;
@@ -508,7 +544,7 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             startBtn.value = "Select some vision";
         }
     }
-    var Game_1, generator_1, debug, startScreen, flowersContainer, gameScreen, startBtn, splashScreen, splashCounter, splashIntervalHandler, planet, rerollBtn, game;
+    var Game_1, generator_1, debug, startScreen, flowersContainer, gameScreen, startBtn, versionLabel, splashScreen, splashCounter, splashIntervalHandler, planet, rerollBtn, game;
     return {
         setters: [
             function (Game_1_1) {
@@ -526,7 +562,9 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
             flowersContainer = document.getElementById("flowers");
             gameScreen = document.getElementById("gameScreen");
             startBtn = document.getElementById("startGame");
+            versionLabel = document.getElementById("version");
             splashScreen = document.getElementById("splashScreen");
+            versionLabel.innerText = debug.version;
             splashCounter = 0;
             splashIntervalHandler = setInterval(() => {
                 splashCounter++;
@@ -535,6 +573,7 @@ System.register("main", ["Game", "generator", "debug"], function (exports_10, co
                 if (splashCounter > 18) {
                     clearInterval(splashIntervalHandler);
                     splashScreen.remove();
+                    startScreen.style.opacity = "1";
                 }
             }, 50);
             if (debug.showFlowersOnPage) {

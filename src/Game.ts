@@ -2,14 +2,15 @@ import { Planet } from "./Planet";
 import { getRandomElement } from "./utils/misc";
 
 export class Game {
-    public flowerScale = .5;
-    public initialTimeLeft = 20;
-    public initialFlowerCount = 15;
-    public flowerSpawnPerSecond = 1.5;
+    static flowerScale = .5;
+    static initialTimeLeft = 20;
+    static initialFlowerCount = 15;
+    static flowerSpawnPerSecond = 1.5;
 
+    static maxTotalTime = +(localStorage.getItem("maxTotalTime") || Game.initialTimeLeft);
 
     public totalTime = 0;
-    public timeLeft = this.initialTimeLeft;
+    public timeLeft = Game.initialTimeLeft;
     public gameOver = false;
     public timerId: number;
 
@@ -29,16 +30,16 @@ export class Game {
         
         ctxTerrain.imageSmoothingEnabled = false;
     
-        for (let x = 0; x < canvasTerrain.width; x += planet.grass.lastCtx!.canvas.width * this.flowerScale) {
-            for (let y = 0; y < canvasTerrain.height; y += planet.grass.lastCtx!.canvas.height * this.flowerScale) {
+        for (let x = 0; x < canvasTerrain.width; x += planet.grass.lastCtx!.canvas.width * Game.flowerScale) {
+            for (let y = 0; y < canvasTerrain.height; y += planet.grass.lastCtx!.canvas.height * Game.flowerScale) {
                 ctxTerrain.drawImage(
                     planet.grass.lastCtx!.canvas,
                     0, 0,
                     planet.grass.lastCtx!.canvas.width, 
                     planet.grass.lastCtx!.canvas.height,
                     x, y,
-                    planet.grass.lastCtx!.canvas.width * this.flowerScale, 
-                    planet.grass.lastCtx!.canvas.height * this.flowerScale,
+                    planet.grass.lastCtx!.canvas.width * Game.flowerScale, 
+                    planet.grass.lastCtx!.canvas.height * Game.flowerScale,
                 )
             }        
         }
@@ -52,28 +53,36 @@ export class Game {
                 clearInterval(this.timerId);
             } else {
                 this.totalTime += dt;
-                if (Math.random() < this.flowerSpawnPerSecond * dt) {
+                if (this.totalTime > Game.maxTotalTime) {
+                    Game.maxTotalTime = this.totalTime;
+                    localStorage.setItem("maxTotalTime", Game.maxTotalTime.toString());
+                }
+                if (Math.random() < Game.flowerSpawnPerSecond * dt) {
                     this.addFlower();
                 }
             }
             this.renderStats();
         }, dt * 1000);
-        for (let i = 0; i < this.initialFlowerCount; i++) {
+        for (let i = 0; i < Game.initialFlowerCount; i++) {
             this.addFlower();
         }
         this.renderStats();
     }
 
+    gameOverLabel = document.getElementById("gameOver-label") as HTMLLabelElement;
+    maxTotalTimeLabel = document.getElementById("maxTotalTime-label") as HTMLLabelElement;
+    totalTimeLabel = document.getElementById("totalTime-label") as HTMLLabelElement;
+    timeLeftLabel = document.getElementById("timeLeft-label") as HTMLLabelElement;
+        
     renderStats() {
-        const gameOverLabel = document.getElementById("gameOver-label") as HTMLLabelElement;
-        gameOverLabel.style.display = this.gameOver ? "block" : "none";
-        const totalTimeLabel = document.getElementById("totalTime-label") as HTMLLabelElement;
-        totalTimeLabel.innerText = this.totalTime.toFixed(1);
-        const timeLeftLabel = document.getElementById("timeLeft-label") as HTMLLabelElement;
-        timeLeftLabel.innerText = this.timeLeft.toFixed(1);
-        timeLeftLabel.style.color = this.timeLeft < 5 ? "red" : "white"
+        this.gameOverLabel.style.display = this.gameOver ? "block" : "none";
+        this.maxTotalTimeLabel.innerText = Game.maxTotalTime.toFixed(1);
+        this.totalTimeLabel.innerText = this.totalTime.toFixed(1);
+        this.totalTimeLabel.style.color = (this.totalTime === Game.maxTotalTime) ? "lime" : "white";
+        this.timeLeftLabel.innerText = this.timeLeft.toFixed(1);
+        this.timeLeftLabel.style.color = this.timeLeft < 5 ? "red" : "white"
         if (this.timeLeft < 5) {
-            timeLeftLabel.style.fontSize = (40 - (this.timeLeft * 10) % 5) + "px";
+            this.timeLeftLabel.style.fontSize = (40 - (this.timeLeft * 10) % 5) + "px";
         }
 
         const goatPlain = document.getElementById("goat-plain-ingame") as HTMLImageElement;
@@ -93,18 +102,17 @@ export class Game {
         
         
         const flower = getRandomElement(this.planet.flowers);
-        const left = 2 + Math.random() * (this.gameField.clientWidth - flower.source.width * this.flowerScale - 4);
-        const top = 2 + Math.random() * (this.gameField.clientHeight - flower.source.height * this.flowerScale - 4);
+        const left = 2 + Math.random() * (this.gameField.clientWidth - flower.source.width * Game.flowerScale - 4);
+        const top = 2 + Math.random() * (this.gameField.clientHeight - flower.source.height * Game.flowerScale - 4);
         
         const canvas = document.createElement("canvas");
         this.gameField.appendChild(canvas);
         this.flowers.push(canvas);
-        canvas.style.position = "absolute";
+        canvas.classList.add("flower-canvas");
         canvas.style.left = left + "px";
         canvas.style.top = top + "px";
-        canvas.width = flower.source.width * this.flowerScale;
-        canvas.height = flower.source.height * this.flowerScale;
-        canvas.style.zIndex = "10";
+        canvas.width = flower.source.width * Game.flowerScale;
+        canvas.height = flower.source.height * Game.flowerScale;
         const ctx = canvas.getContext("2d")!;
         ctx.drawImage(flower.lastCtx!.canvas,
             0, 0, canvas.width, canvas.height);
@@ -124,7 +132,6 @@ export class Game {
                 const bonusLabelY = ev.offsetY + top;
                 bonusLabel.style.left = bonusLabelX + "px";
                 bonusLabel.style.top = bonusLabelY + "px";
-                bonusLabel.style.zIndex = "5";
                 this.gameField.appendChild(bonusLabel);
                 let c = 0;
                 const anim = setInterval(() => {
@@ -137,11 +144,16 @@ export class Game {
                         this.gameField.removeChild(bonusLabel);
                     }
                 }, 50);
-                this.gameField.removeChild(canvas);
+                canvas.remove();
                 this.flowers = this.flowers.filter(f => f !== canvas);
             }
         });
-
+        setTimeout(() => {
+            if (!this.gameOver) {
+                canvas.remove();
+                this.flowers = this.flowers.filter(f => f !== canvas);
+            }
+        }, 1000 / Game.flowerSpawnPerSecond * 30 * (1 + Math.random()));
     }
 
     kill() {

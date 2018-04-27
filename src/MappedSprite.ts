@@ -4,7 +4,7 @@ import { Vision } from "./Vision";
 import * as debug from "./debug";
 
 export class MappedSprite {
-    public flowerPriceFactor = 1 / 350;
+    public flowerPriceFactor = 1 / 300;
 
     constructor(
         public source: HTMLImageElement,

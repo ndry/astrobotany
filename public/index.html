@@ -73,8 +73,20 @@
                     
             </div> 
             <div id="gameScreen">
-                <label id="totalTime-label">15</label>
-                <label id="timeLeft-label">10</label>
+                <div id="stats-view">
+                    <div>
+                        Longest life:
+                        <label id="maxTotalTime-label" class="stats-label">90</label>
+                    </div>
+                    <div>
+                        Time alive:
+                        <label id="totalTime-label" class="stats-label">15</label>
+                    </div>
+                    <div>
+                        Time left:
+                        <label id="timeLeft-label" class="stats-label">10</label>
+                    </div>
+                </div>
                 <div id="gameField">
                     <canvas id="terrain"></canvas>
                     <label id="gameOver-label">Game Over!</label>
@@ -205,6 +217,7 @@
                     </div>
                 </div>
             </div>
+            <label id="version">v0</label>
             <input type="button" id="reroll" value="Reroll">
             <input type="button" id="startGame" value="Go!">
     </div>

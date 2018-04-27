@@ -11,8 +11,11 @@ const startScreen =  document.getElementById("startScreen")!;
 const flowersContainer = document.getElementById("flowers")!;
 const gameScreen = document.getElementById("gameScreen")!;
 const startBtn = document.getElementById("startGame") as HTMLButtonElement;
+const versionLabel = document.getElementById("version") as HTMLLabelElement;
+const splashScreen = document.getElementById("splashScreen")!;
 
-const splashScreen =  document.getElementById("splashScreen")!;
+
+versionLabel.innerText = debug.version;
 
 let splashCounter = 0;
 const splashIntervalHandler = setInterval(() => {
@@ -22,6 +25,7 @@ const splashIntervalHandler = setInterval(() => {
     if (splashCounter > 18) {
         clearInterval(splashIntervalHandler);
         splashScreen.remove();
+        startScreen.style.opacity = "1";
     }
 }, 50);
 

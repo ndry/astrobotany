@@ -107,7 +107,8 @@ input[type="radio"].color-choice-radio-red + label::before {
     content: url('assets/LD_button_RED_OFF.png');
 }
 
-input[type="radio"].color-choice-radio-red:checked + label::before {
+input[type="radio"].color-choice-radio-red:checked + label::before,
+input[type="radio"].color-choice-radio-red:hover + label::before {
     content: url('assets/LD_button_RED_ON.png');
 }
 
@@ -116,7 +117,8 @@ input[type="radio"].color-choice-radio-green + label::before {
     content: url('assets/LD_button_GREEN_OFF.png');
 }
 
-input[type="radio"].color-choice-radio-green:checked + label::before {
+input[type="radio"].color-choice-radio-green:checked + label::before,
+input[type="radio"].color-choice-radio-green:hover + label::before {
     content: url('assets/LD_button_GREEN_ON.png');
 }
 
@@ -125,7 +127,8 @@ input[type="radio"].color-choice-radio-blue + label::before {
     content: url('assets/LD_button_BLUE_OFF.png');
 }
 
-input[type="radio"].color-choice-radio-blue:checked + label::before {
+input[type="radio"].color-choice-radio-blue:checked + label::before,
+input[type="radio"].color-choice-radio-blue:hover + label::before {
     content: url('assets/LD_button_BLUE_ON.png');
 }
 
@@ -135,7 +138,7 @@ input[type="radio"].color-choice-radio-blue:checked + label::before {
     font-family: arial;
     font-size: 30px;
     border: 1px white solid;
-    margin: 40px 15px;
+    margin: 25px 15px;
 }
 
 #reroll {
@@ -189,10 +192,19 @@ input[type="radio"].color-choice-radio-blue:checked + label::before {
     height: 100%; 
 }
 
-#totalTime-label, #timeLeft-label {
+#stats-view > div {
+    display: inline-block;
+    width: 33%;
+}
+
+.stats-label {
     font-family: arial;
     font-size: 40px;
     margin: 0px 50px;
+}
+
+#maxTotalTime-label {
+    color: lime;
 }
 
 
@@ -203,10 +215,22 @@ input[type="radio"].color-choice-radio-blue:checked + label::before {
     margin-top: 1000px;
 }
 
+.flower-canvas {
+    position: absolute;
+    z-index: 10;
+    pointer-events: painted;
+}
+
+.flower-canvas:hover {
+    filter: drop-shadow(0px 0px 3px white);
+}
+
 .bonus-label {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 30px;
     -webkit-text-stroke: 0.5px white;
+    pointer-events: none;
+    z-index: 50;
 }
 
 .positive-bonus-label {
@@ -222,4 +246,12 @@ input[type="radio"].color-choice-radio-blue:checked + label::before {
     left: -50px;
     bottom: -60px;
     z-index: 50;
+    pointer-events: none;
+}
+
+#version {
+    text-align: right;
+    display: block;
+    width: 100%;
+    opacity: .2;
 }
